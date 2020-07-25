@@ -14,12 +14,20 @@ Running under: macOS Catalina 10.15.5
 
 # Libraries & Packages ----
 library(tidyverse)
+library(readxl)
 
 # Loading Data ----
 
 # data source: https://unstats.un.org/sdgs/indicators/database/
-# select Goal 4 2000-2019,
+# select Goal 4.4 (only, n = 4795) 2000-2019,
 
+# also xls, read_excel()
+data <- read_xlsx("./data/sdg_goal_4.4.xlsx")
+View(data)
+
+# str(), glimpse()
+glimpse(data)
+str(data)
 
 
 # Cleaning Data ---- 
@@ -27,8 +35,6 @@ library(tidyverse)
 # Outliers and Missing Data ----
 
 # Manipulating Columns and Rows ----
-
-# str(), glimpse()
 
 # Plot: Boxplot
 
