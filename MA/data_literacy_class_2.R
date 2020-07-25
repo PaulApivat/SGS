@@ -100,12 +100,27 @@ ggplot(data = melt_multiple_histo, mapping = aes(x = variable, y = value)) +
 
 
 
-
-
-
 # Manipulating Columns and Rows ----
 
+# caveat - this might not make sense
+data %>%
+    # we could just select GeoAreaName and Value
+    select(SeriesDescription, GeoAreaName, Value) %>%
+    # need to turn Value into numeric - like above
+    mutate(Value = as.numeric(Value)) %>%
+    # group_by GeoAreaName
+    group_by(GeoAreaName) %>%
+    summarize(avg_value = mean(Value)) %>%
+    ungroup() %>%
+    
+    # keep it manageable
+    head() %>%
+    
 # Plot: Boxplot
+    ggplot(aes(x = GeoAreaName, y = avg_value)) +
+    geom_boxplot() +
+    facet_wrap(~ GeoAreaName, scales = 'free')
+
 
 # Plot: Histogram / Density Plots
 
