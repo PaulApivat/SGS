@@ -59,7 +59,25 @@ data %>%
     # filter by MALE, FEMALE, BOTHSEX
     filter(Sex=='FEMALE') %>% view()
 
+## REDO but add ICT Skill Type
+names(data)
 
+data %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`) %>%
+    rename(
+        type_of_skill = `Type of skill`
+    ) %>%
+    group_by(GeoAreaName, Sex, type_of_skill) %>%
+    mutate(
+        Value = as.numeric(Value)
+    ) %>%
+    summarize(avg_value = mean(Value)) %>%
+    ungroup() %>%
+    filter(Sex=='BOTHSEX') %>%
+    filter(type_of_skill=='EMAIL') %>% 
+    arrange(desc(avg_value)) 
+
+## consider saving and converting to heatmap()
 
 
 # Count & Tally ----
