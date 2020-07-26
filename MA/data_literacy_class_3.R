@@ -85,6 +85,6 @@ data %>%
 # Time Series ----
 
 ## Use different dataset
-
-
+SDGData <- read_csv("./data/SDGData.csv")
+glimpse(SDGData)
 
