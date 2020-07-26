@@ -113,7 +113,7 @@ data %>%
     summarize(avg_value = mean(Value)) %>%
     ungroup() %>%
     
-    # keep it manageable
+    # keep it manageable (6 countries)
     head() %>%
     
 # Plot: Boxplot
@@ -122,8 +122,22 @@ data %>%
     facet_wrap(~ GeoAreaName, scales = 'free')
 
 
-# Plot: Histogram / Density Plots
+# Now that we have a sense for our data, we can ask specific questions:
 
+# pick specific columns of interest for specific question 
+
+names(data)
+
+# Objective: Find Proportion of Youth/Adult with ICT skills by Country & Gender
+
+data %>%
+    # select specific columns (de-select others)
+    select(GeoAreaName, Value, Sex, `Type of skill`) %>%
+    # rename column
+    rename(type_of_skill = `Type of skill`)
+
+
+    
 
 
 
