@@ -44,23 +44,23 @@ data %>%
     mutate(
         Value = as.numeric(Value)
     ) %>%
+# Group By ----
     group_by(GeoAreaName, Sex) %>%
     # tally(sort = TRUE) literally counts the rows
     summarize(
         total_value = sum(Value)
     ) %>%
     # Sorting & Arranging 
-    arrange(desc(total_value))
-    
+    arrange(desc(total_value)) %>%
     # NOTE: come to think of it, it doesn't make sense to add proportions, 
     # so you want to see proportion by gender - add 'Sex' to group_by
-    
 
 # Filtering ----
+    # filter by MALE, FEMALE, BOTHSEX
+    filter(Sex=='FEMALE') %>% view()
 
 
 
-# Group By ----
 
 # Count & Tally ----
 
