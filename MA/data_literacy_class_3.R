@@ -30,11 +30,35 @@ data %>%
     rename(type_of_skill = `Type of skill`)
 
 
-# Summarizing & Aggregating ----
+# Summarizing & Aggregating, Sorting & Arranging ----
+
+# Objective: Group By Country
+data %>%
+    # select specific columns (de-select others)
+    select(GeoAreaName, Value, Sex, `Type of skill`) %>%
+    # rename column
+    rename(type_of_skill = `Type of skill`) %>% 
+    # group by
+    # notice the console code reads 88 groups (implying 88 countries)
+    # re-inforce that data-types are always important; show summarize ERROR first
+    mutate(
+        Value = as.numeric(Value)
+    ) %>%
+    group_by(GeoAreaName, Sex) %>%
+    # tally(sort = TRUE) literally counts the rows
+    summarize(
+        total_value = sum(Value)
+    ) %>%
+    # Sorting & Arranging 
+    arrange(desc(total_value))
+    
+    # NOTE: come to think of it, it doesn't make sense to add proportions, 
+    # so you want to see proportion by gender - add 'Sex' to group_by
+    
 
 # Filtering ----
 
-# Sorting & Arranging ----
+
 
 # Group By ----
 
