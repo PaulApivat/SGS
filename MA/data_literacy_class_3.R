@@ -104,6 +104,7 @@ SDGData %>%
 
 
 # Women and Business and the Law Indes Score (1-100) appears to have more interesting data than Primary Education
+# Google Search definition for 'Women and Business and the Law'
 SDGData %>% 
     filter(`Indicator Name` == 'Women Business and the Law Index Score (1-100)') %>% 
     filter(`Country Name` == 'Thailand' | `Country Name` == 'Cambodia' | `Country Name` == 'Myanmar' | `Country Name` == 'Lao PDR' | `Country Name` == 'Vietnam') %>%
