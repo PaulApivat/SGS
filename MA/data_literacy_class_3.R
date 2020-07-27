@@ -88,3 +88,26 @@ data %>%
 SDGData <- read_csv("./data/SDGData.csv")
 glimpse(SDGData)
 
+## Select CLMV countries
+names(SDGData)
+
+SDGData %>% view()
+
+# Objective: Find ONE Indicator Name for CLMV countries with the most complete data
+# Solution: Primary Education snd Women Business
+SDGData %>%
+    select(`Country Name`, `Indicator Name`, '1990', '1991', '2018', '2019') %>% 
+    filter(`Country Name` == 'Thailand' | `Country Name` == 'Cambodia' | `Country Name` == 'Myanmar' | `Country Name` == 'Lao PDR' | `Country Name` == 'Vietnam') %>%
+    # DROP missing values in NA
+    drop_na(c('1990', '1991', '2018', '2019')) %>%
+    filter(`Indicator Name` == 'Women Business and the Law Index Score (1-100)' | `Indicator Name` == 'Primary education, duration (years)') %>% view()
+
+
+# Women and Business and the Law Indes Score (1-100) appears to have more interesting data than Primary Education
+SDGData %>% 
+    filter(`Indicator Name` == 'Women Business and the Law Index Score (1-100)') %>% 
+    filter(`Country Name` == 'Thailand' | `Country Name` == 'Cambodia' | `Country Name` == 'Myanmar' | `Country Name` == 'Lao PDR' | `Country Name` == 'Vietnam') %>%
+    view()
+
+# Next Step: Time Series Data requires TIDY data from LONG to WIDE
+
