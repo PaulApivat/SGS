@@ -83,6 +83,10 @@ ggplot(data = women_business_law_index_clmv, mapping = aes(x = `1990`, y = `Coun
 # We'll demonstrate Tidy vs Un-Tidy through Visualization
 # NOTE with previous geom_col - we could only visualize ONE year
 
+# Line Chart ----
+
+# NOTE: geom_point IMPLICITLY groups by color, geom_line requires EXPLICIT group assignment
+
 # Preprocessing required before visualize Time-Series
 women_business_law_index_clmv %>%
     # select variables you need - helps make your work manageable
@@ -94,17 +98,58 @@ women_business_law_index_clmv %>%
     ) %>%
     # Tidy principle: turn Wide data into Long data
     gather(`1990`:`2019`, key = 'year', value = 'score') %>%
-    #filter(country_name=='Thailand') %>%
-    ggplot(aes(x = year, y = score, group = country_name, color = country_name)) +
-    geom_line()
-    
+    # Belatedly changing year from chr to date
+    mutate(
+        year = as.Date(year, format = "%Y")
+    ) %>%
+    ggplot(aes(x = year, y = score, group = country_name)) +
+    geom_line(aes(color = country_name), size = 3) +
+    # NOTE: geom_point IMPLICITLY groups by color, geom_line requires EXPLICIT group assignment
+    #geom_point(aes(color = country_name))
+
+    # Theme ----
+    # fix year numbers overlapping
+    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+    # To break up dates into 5-year ranges
+    scale_x_date(breaks = '5 years')
+
+
+
+
+
 
 # alternative way using inverse selection
 women_business_law_index_clmv %>%
     select(-`Country Code`, -`Indicator Code`, everything())
 
 
-# Line Chart
+
+# Defining GROUP in ggplot vs group_by in pre-processing: Better Example for STACKED Bar chart or AREA chart???
+women_business_law_index_clmv %>%
+    select(`Country Name`, `Indicator Name`, c(`1990`:`2019`)) %>% 
+    rename(
+        country_name = `Country Name`,
+        indicator_name = `Indicator Name`
+    ) %>%
+    gather(`1990`:`2019`, key = 'year', value = 'score') %>%
+    # must change country_name from character to factor -- DATA TYPES
+    mutate(
+        country_name = as.factor(country_name)
+    ) %>%
+    # Now there are five groups
+    group_by(country_name, year) %>%
+    summarize(
+        total_score = sum(score)
+    ) %>%
+    ungroup() %>%
+    ggplot(aes(x = year, y = total_score)) +
+    geom_line(aes(group = country_name, color = country_name))
+   
+
+
+
+
+
 
 # Scatter Plot
 
