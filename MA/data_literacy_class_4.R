@@ -138,11 +138,16 @@ women_business_law_index_clmv %>%
         indicator_name = `Indicator Name`
     ) %>%
     gather(`1990`:`2019`, key = 'year', value = 'score') %>%
+    mutate(
+        year = as.Date(year, format = "%Y")
+    ) %>%
     ggplot(aes(x = year, y = score, fill = country_name, group = country_name)) +
     #geom_col(position = 'fill') +
-    geom_col(position = 'stack') +
-    #geom_area() + 
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+    #geom_col(position = 'stack') +
+    geom_area() + 
+    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+    theme_minimal() +
+    scale_x_date(breaks = '5 years')
 
 
 
@@ -173,7 +178,7 @@ women_business_law_index_clmv %>%
     ) %>%
     ungroup() %>%
     ggplot(aes(x = year, y = total_score)) +
-    geom_line(aes(group = country_name, color = country_name))
+    geom_line(aes(group = country_name, color = country_name)) 
    
 
 
