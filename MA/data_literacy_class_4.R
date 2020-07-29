@@ -35,7 +35,7 @@ women_business_law_index_clmv <- SDGData %>%
     
 women_business_law_index_clmv
 
-# Tidy vs Un-Tidy: We'll demonstrate Tidy vs Un-Tidy through Visualization
+
 
 
 # Visualization ----
@@ -78,9 +78,30 @@ ggplot(data = women_business_law_index_clmv, mapping = aes(x = `1990`, y = `Coun
 ?geom_bar
 ?geom_col
 
+# Tidy vs Un-Tidy ----
 
+# We'll demonstrate Tidy vs Un-Tidy through Visualization
+# NOTE with previous geom_col - we could only visualize ONE year
 
+# Preprocessing required before visualize Time-Series
+women_business_law_index_clmv %>%
+    # select variables you need - helps make your work manageable
+    select(`Country Name`, `Indicator Name`, c(`1990`:`2019`)) %>% 
+    # rename variables with 'spaces' in their names - makes it easier to handle
+    rename(
+        country_name = `Country Name`,
+        indicator_name = `Indicator Name`
+    ) %>%
+    # Tidy principle: turn Wide data into Long data
+    gather(`1990`:`2019`, key = 'year', value = 'score') %>%
+    #filter(country_name=='Thailand') %>%
+    ggplot(aes(x = year, y = score, group = country_name, color = country_name)) +
+    geom_line()
+    
 
+# alternative way using inverse selection
+women_business_law_index_clmv %>%
+    select(-`Country Code`, -`Indicator Code`, everything())
 
 
 # Line Chart
