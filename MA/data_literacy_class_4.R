@@ -110,8 +110,18 @@ women_business_law_index_clmv %>%
     # Theme ----
     # fix year numbers overlapping
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+    theme_minimal() +
     # To break up dates into 5-year ranges
-    scale_x_date(breaks = '5 years')
+    scale_x_date(breaks = '5 years') +
+    # Labels ----
+    labs(
+        title = 'Women Business and the Law Index Score (1-100)',
+        subtitle = '1990 - 2019',
+        x = '',
+        y = 'Index Score',
+        color = 'Country',
+        caption = 'Lao PDR has made the most progress in the last 20 years'
+        )
 
 
 
