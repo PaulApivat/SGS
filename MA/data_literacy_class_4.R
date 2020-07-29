@@ -124,8 +124,26 @@ women_business_law_index_clmv %>%
         )
 
 # Next step: Create Stacked Barchart + Stacked Area chart
-# use group_by pre-processing
 # Bonus: Then, create heatmap of the LONG table.
+
+# Stacked Bar Chart or Area Chart ----
+
+# NOTE: can do stack bar (fill), stack bar (stack) OR area_area()
+# No need for group_by, summarized, ungroup
+
+women_business_law_index_clmv %>%
+    select(`Country Name`, `Indicator Name`, c(`1990`:`2019`)) %>% 
+    rename(
+        country_name = `Country Name`,
+        indicator_name = `Indicator Name`
+    ) %>%
+    gather(`1990`:`2019`, key = 'year', value = 'score') %>%
+    ggplot(aes(x = year, y = score, fill = country_name, group = country_name)) +
+    #geom_col(position = 'fill') +
+    geom_col(position = 'stack') +
+    #geom_area() + 
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
 
 
 
