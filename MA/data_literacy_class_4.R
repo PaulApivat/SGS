@@ -186,7 +186,68 @@ women_business_law_index_clmv %>%
 
 
 
-# Scatter Plot
+# Scatter Plot or BarChart
+# NOTE: Not as clear
+women_business_law_index_clmv %>%
+    select(`Country Name`, `Indicator Name`, c(`1990`:`2019`)) %>% 
+    rename(
+        country_name = `Country Name`,
+        indicator_name = `Indicator Name`
+    ) %>%
+    gather(`1990`:`2019`, key = 'year', value = 'score') %>%
+    # must change country_name from character to factor -- DATA TYPES
+    mutate(
+        country_name = as.factor(country_name),
+        year1 = year
+    ) %>%
+    ggplot(aes(x = country_name, y = score)) +
+    #geom_point(aes(color = country_name), position = 'jitter') 
+    geom_col(aes(fill = country_name))
+
+
+# Lollipop Better = Scatter + Bar
+
+library(ggrepel)
+
+#### MONSTROSITY: Mistakes in GGPLOT are beautiful ----
+women_business_law_index_clmv %>%
+    select(`Country Name`, `Indicator Name`, c(`1990`:`2019`)) %>% 
+    rename(
+        country_name = `Country Name`,
+        indicator_name = `Indicator Name`
+    ) %>%
+    gather(`1990`:`2019`, key = 'year', value = 'score') %>%
+    # must change country_name from character to factor -- DATA TYPES
+    mutate(
+        country_name = as.factor(country_name)
+    ) %>%
+    ggplot(aes(x = country_name, y = score)) +
+    geom_segment(aes(x = country_name, y = 0, xend = country_name, yend = score), color = 'black', size = 3) +
+    # setting color to variable name only works when mapping across aes()
+    geom_point(size = 5, aes(color = country_name), alpha = 0.3) +
+    #geom_text(aes(label = year), nudge_x = 0.2) +
+    geom_text_repel(aes(label = year), color = 'red', size = 5)
+
+
+# Lollipop - with Year Label bookend ----
+women_business_law_index_clmv %>%
+    select(`Country Name`, `Indicator Name`, c(`1990`:`2019`)) %>% 
+    rename(
+        country_name = `Country Name`,
+        indicator_name = `Indicator Name`
+    ) %>%
+    gather(`1990`:`2019`, key = 'year', value = 'score') %>%
+    # must change country_name from character to factor -- DATA TYPES
+    mutate(
+        country_name = as.factor(country_name)
+    ) %>%
+    ggplot(aes(x = country_name, y = score)) +
+    geom_segment(aes(x = country_name, y = 0, xend = country_name, yend = score, color = country_name)) +
+    # setting color to variable name only works when mapping across aes()
+    geom_point(aes(color = country_name, size = score), alpha = 0.3) +
+    geom_text(aes(label = ifelse(year == '2019' | year == '1990', year, '')), nudge_x = 0.2, nudge_y = 0.2)
+    #geom_text_repel(aes(label = year), size = 3)
+
 
 
 
