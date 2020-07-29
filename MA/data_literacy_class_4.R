@@ -123,7 +123,9 @@ women_business_law_index_clmv %>%
         caption = 'Lao PDR has made the most progress in the last 20 years'
         )
 
-
+# Next step: Create Stacked Barchart + Stacked Area chart
+# use group_by pre-processing
+# Bonus: Then, create heatmap of the LONG table.
 
 
 
