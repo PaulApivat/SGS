@@ -163,7 +163,7 @@ data %>%
     # select specific columns (de-select others)
     select(GeoAreaName, Value, Sex, `Type of skill`) %>%
     # rename column
-    rename(type_of_skill = `Type of skill`)
+    rename(type_of_skill = `Type of skill`) %>% view()
 
 
     
