@@ -1,0 +1,299 @@
+---
+title: "Basic_Exploration_RMarkdown"
+author: "Paul Apivat Hanvongse"
+date: "8/5/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+## Actual Exploration
+
+I kept the above for you to see what is provided everytime you click on File -> New File -> RMarkdown. The primary thing for you to know about RMarkdown (for now) is that its a format that you can use to run your analysis and, most importantly, communicate your findings to your stakeholders. 
+
+Below we will do some fundamental things that you'll do at the start of every data handling session. 
+
+```{r, echo=FALSE}
+
+# Good Practice: Run sessionInfo() to make a note of software version you're using
+sessionInfo()
+
+# Libraries and Packages 
+install.packages('tidyverse')
+library(tidyverse)
+library(readxl)
+install.packages('reshape2')
+library(reshape2)
+
+```
+
+## U.N. Statistics: Loading and Reading Data
+
+We will be exploring Sustainable Development Goals Indicator [statistics](https://unstats.un.org/sdgs/indicators/database/). While there are a variety of indicators and goals, we'll focus our basic data exploration on Goal 4, "Ensure inclusive and equitable quality education and promote lifelong learning opportunities for all", Target 4.4, "By 2030, substantially increase the number of youth and adults who have relevant skills, including technical and vocational skills, for employment, decent jobs and entrepreneurship". 
+
+Here we'll read in the data that is in Excel format. I've stored raw data in the 'data' folder for this project.
+
+Several things are going on at once here, I explain in the comments. Comments are preceded below by a hash tag '#'.
+
+```{r, include=FALSE}
+
+# the read_xlsx() function is used to denote file path to the raw data
+# reads data and assign / save to 'data'
+
+data <- read_xlsx("./data/sdg_goal_4.4.xlsx")
+
+# glimpse() function is used to preview the data
+
+glimpse(data)
+```
+
+## Exploring the Data
+
+In this section we'll use basic commands that come with "Base" R to get a feel for our data. We'll start with the aptly named `glimpse()` function to give you a peek at the data; you'll note the *number* of Rows and Columns. You'll note the column names `$ Column Name` and the `data type` (i.e., dbl, chr, lgl).
+
+If you just want column names, you'll use the `names()` function. If you just want number of rows and columns, you can use `dim()`.
+
+The `View()` or `view()` will open up another tab to visually *show* you your data in spreadsheet format. If you're used to Excel, this will look most like an excel sheet. 
+
+The `str()` function provides slightly more info than `glimpse()`. Namely the *data type* of the data object itself: 'S3: tbl_df / tbl / data.frame'.
+
+```{r, include=FALSE}
+
+# The aptly named glimpse() function allows you to get a glimpse of the data
+glimpse(data)
+
+# If you just want column names
+names(data)
+
+# If you just want the number of rows and columns, use dim()
+dim(data)
+
+# The View() command allows you to see the data in 'spreadsheet' like format. This is called a data frame or tibble.  Alternatively, you can also click on the data object in the Global Environment.
+
+# View()
+View(data)
+# view()
+data %>% view()
+
+# str() is a function that provides another snapshot preview of the object
+# provides more info than glimpse()
+str(data)
+
+# there is some overlap with glimpse() and str(), additionally, for numeric data, the summary() function provides quick descriptive statistics (Min, Median, Mean, Max, Quartile)
+summary(data)
+```
+
+## Missing Data
+
+If you click on the 'spread sheet' view of the data, using `View()` or clicking in the Global Environment panel, you can see for yourself that some columns have 'NA'. But you still want a way to explore exactly how many 'NA' are in each column.
+
+Note, we're now going to be doing something called 'piping' `%>%` where we use multiple functions in successive order on a data object. This functionality `%>%` is possible with the `tidyverse` library (see above), which is the most popular R package and one that we'll use heavily.
+
+Here, we cover two approaches to finding NAs values in your columns - the tedious way and the more efficient way. 
+
+The tedious way is better for learning. So we'll break it down first, then show you the quick way which combines several elements so you'll have to memorize a few things. 
+
+The tedious way requires we take 'data', pipe into `summarize()` function and create variables like `goal_na`, which I take to mean the NAs in the `Goal` column. It is set equal to `sum()`, which contains `is.na()`
+
+```{r, include=FALSE}
+
+# Finding missing values in the Goal column
+data %>%
+  summarize(goal_na = sum(is.na(Goal)))
+
+# Tedious way of finding NA in each column, one-by-one
+data %>%
+    summarize(
+        goal_na = sum(is.na(Goal)),
+        target_na = sum(is.na(Target)),
+        indicator_na = sum(is.na(Indicator)),
+        timecoverage_na = sum(is.na(TimeCoverage)),
+        upperbound_na = sum(is.na(UpperBound))
+    )
+
+# Efficient way of finding all NA's for each column
+data %>%
+  summarize_all(~ sum(is.na(.)))
+```
+
+## Outliers
+
+In this section, we'll examine the data to see if there are any outliers. We'll start by creating our own data frame to build an intuition.
+
+We'll use the aforementioned `summary()` function to explore the distribution of the data and how the outlier influences it.
+
+We'll also create our first visualization for the purpose of understanding outliers. You can see that an outlier will not only distort the 'mean' or average value, but also distort any visualization, including the boxplot. 
+
+```{r, include=FALSE}
+
+# Create two vectors: one has an outlier
+# these two vectors are identical except for one value
+sample_data <- c(3,4,7,2,8,10,7,4,5,6,12,15,11,8,5,9,13,1000000)
+sample_data_1 <- c(3,4,7,2,8,10,7,4,5,6,12,15,11,8,5,9,13,10)
+
+# Convert two vectors into a tibble 
+# note: Vectors are simply one-column tibbles
+sample_data <- as.tibble(sample_data)
+sample_data_1 <- as.tibble(sample_data_1)
+
+# Use summary() function to see outliers in action
+# Notice how 'sensitive' the mean/average is to outliers
+summary(sample_data)
+summary(sample_data_1)
+
+# Quick Boxplot
+
+# Note the 'median' line, 1st Quartile, 3rd Quartile, 
+# Note the whiskers
+sample_data_1 %>% 
+  ggplot(aes(x = value)) +
+  geom_boxplot()
+
+# Boxplot with outlier
+sample_data %>% 
+  ggplot(aes(x = value)) +
+  geom_boxplot()
+
+```
+
+## Outliers Continue
+
+In this section, we'll explore outliers in the actual data. We'll select four columns: GeoAreaCode, TimePeriod, Value, Time_Detail and explore each column for details. 
+
+```{r, include=FALSE}
+
+# Outliers: Individual Histograms
+# primarily num/dbl
+# select only num / dbl
+data %>%
+    select(GeoAreaCode, TimePeriod, Value, Time_Detail) %>%  
+  
+    # note: I selected two variables that are strings/chr
+    # they can still have outliers, but are slightly harder to detect
+  
+    # use mutate to change character to numeric
+    mutate(
+        Value = as.numeric(Value),
+        Time_Detail = as.numeric(Time_Detail)
+    ) %>%
+    # use histogram one-by-one
+    ggplot(aes(x = Time_Detail)) + 
+    geom_histogram(bins = 30)
+
+# Value
+
+# NOTE: this data set looks at:
+# Proportion (%) of youth and adults with ICT skills
+# Percentages should not exceed 100%
+
+data %>%
+    select(GeoAreaCode, TimePeriod, Value, Time_Detail) %>%  
+    
+    mutate(
+        Value = as.numeric(Value),
+        Time_Detail = as.numeric(Time_Detail)
+    ) %>%
+    ggplot(aes(x = Value)) + 
+    geom_histogram(bins = 30)
+
+
+# Time Period
+# You wouldn't expect to see an odd year like 3037 or 4059
+data %>%
+    select(GeoAreaCode, TimePeriod, Value, Time_Detail) %>%  
+    mutate(
+        Value = as.numeric(Value),
+        Time_Detail = as.numeric(Time_Detail)
+    ) %>%
+    ggplot(aes(x = TimePeriod)) + 
+    geom_histogram(bins = 30)
+
+# GeoAreaCode
+data %>%
+    select(GeoAreaCode, TimePeriod, Value, Time_Detail) %>%  
+    mutate(
+        Value = as.numeric(Value),
+        Time_Detail = as.numeric(Time_Detail)
+    ) %>%
+    ggplot(aes(x = GeoAreaCode)) + 
+    geom_histogram(bins = 30)
+
+# How can we display multiple boxplots?
+library(reshape2)
+
+
+
+# Select() only the day we're interested in
+# Use mutate() to change character data types to numeric - just like above
+multiple_histo <- data %>%
+    select(GeoAreaCode, TimePeriod, Value, Time_Detail) %>%
+    mutate(
+        Value = as.numeric(Value),
+        Time_Detail = as.numeric(Time_Detail)
+    )
+
+# NOTE: multiple_histo has four columns
+
+# use melt() function from reshape2 pakcage to turn from wide into long format
+# now melt_multiple_histo has two columns
+melt_multiple_histo <- melt(multiple_histo)
+
+# plot with facetted boxplots to see four boxplots at the same time
+# note: we need to have some awareness of the data dictionary
+ggplot(data = melt_multiple_histo, mapping = aes(x = variable, y = value)) +
+    geom_boxplot() +
+    facet_wrap(~variable, scales = 'free')
+```
+
+## Compare Countries on their Performance with SDG Goal 4, Target 4.4
+
+Finally, we'll use what we learn to begin exploring the actual SDG data. We'll use the boxplot to explore average proportions of children and adults with ICT skills, across different countries.
+
+We'll draw our attention to how data must be pre-processed before we can visualize it. 
+
+To keep it manageable, we'll use the `head()` function to only pick the first six countries (i.e., Algeria, Andorra, Austria, Azerbaijan, Bahrain and Belarus).
+
+```{r, include=FALSE}
+# Manipulating Columns and Rows ----
+
+# caveat - this might not make sense
+data %>%
+    # we could just select GeoAreaName and Value
+    select(SeriesDescription, GeoAreaName, Value) %>%
+    # need to turn Value into numeric - like above
+    mutate(Value = as.numeric(Value)) %>%
+    # group_by GeoAreaName
+    group_by(GeoAreaName) %>%
+    summarize(avg_value = mean(Value)) %>%
+    ungroup() %>%
+    
+    # keep it manageable (6 countries)
+    head() %>%
+    
+# Plot: Boxplot
+    ggplot(aes(x = GeoAreaName, y = avg_value)) +
+    geom_boxplot() +
+    facet_wrap(~ GeoAreaName, scales = 'free')
+```
