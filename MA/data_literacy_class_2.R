@@ -88,6 +88,21 @@ data %>%
     ggplot(aes(x = Time_Detail)) + 
     geom_histogram()
 
+# Building Intuition around Outliers ----
+sample_data <- c(3,4,7,2,8,10,7,4,5,6,12,15,11,8,5,9,13,1000000)
+sample_data_1 <- c(3,4,7,2,8,10,7,4,5,6,12,15,11,8,5,9,13)
+
+
+summary(sample_data)
+summary(sample_data_1)
+
+sample_data <- as.tibble(sample_data)
+sample_data_1 <- as.tibble(sample_data_1)
+
+sample_data %>% ggplot(aes(x = value)) + geom_boxplot()
+
+sample_data_1 %>% ggplot(aes(x = value)) + geom_boxplot()
+
 # Outliers: Multiple density plots
 library(reshape2)
 
