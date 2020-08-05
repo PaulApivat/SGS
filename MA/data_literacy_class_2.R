@@ -24,6 +24,7 @@ library(reshape2)
 
 # also xls, read_excel()
 data <- read_xlsx("./data/sdg_goal_4.4.xlsx")
+glimpse(data)
 View(data)
 
 data2 <- read_xlsx("./data/sdg_goal_4.4_clmv.xlsx")
@@ -34,6 +35,8 @@ View(data2)
 glimpse(data)
 str(data) 
 str(data2)
+summary(data)
+summary(data2)
 
 # Things to note when using glimpse():
 # - number of rows, observations
@@ -50,6 +53,17 @@ str(data2)
     
 
 # Outliers and Missing Data ----
+
+names(data)
+# long way of detecting NA
+data %>%
+    summarize(
+        goal_na = sum(is.na(Goal)),
+        target_na = sum(is.na(Target)),
+        indicator_na = sum(is.na(Indicator)),
+        timecoverage_na = sum(is.na(TimeCoverage)),
+        upperbound_na = sum(is.na(UpperBound))
+    )
 
 # detect missing values by column
 # outcome: either zero missing values or all missing values
