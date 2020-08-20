@@ -16,6 +16,8 @@ The primary thing for you to know about RMarkdown (for now) is that its a format
 
 First, we will do some fundamental things that you'll want to do at the start of *every* data handling session. 
 
+Note the difference between "white" area and "light gray" areas (code chunks).
+
 ```{r, echo=FALSE}
 
 # Good Practice: Run sessionInfo() to make a note of software version you're using
@@ -171,6 +173,9 @@ data %>%
 # Efficient way of finding all NA's for each column
 data %>%
   summarize_all(~ sum(is.na(.)))
+
+
+?is.na
 ```
 
 ## YOUR TURN: Missing Data
@@ -191,7 +196,8 @@ data %>%
 
 
 ## What is a more efficient way to find missing value for data_clmv all at once?
-
+data_clmv %>%
+  summarize_all(~ sum(is.na(.)))
 
 ```
 
