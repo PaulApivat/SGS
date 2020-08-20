@@ -20,6 +20,7 @@ Note the difference between "white" area and "light gray" areas (code chunks).
 
 ```{r, echo=FALSE}
 
+
 # Good Practice: Run sessionInfo() to make a note of software version you're using
 sessionInfo()
 
@@ -100,6 +101,7 @@ colnames(data)
 
 # If you just want the number of rows and columns, use dim()
 dim(data)
+dim(data_clmv)
 
 # The View() command allows you to see the data in 'spreadsheet' like format. This is called a data frame or tibble.  Alternatively, you can also click on the data object in the Global Environment.
 
@@ -194,6 +196,10 @@ data %>%
     footnote_na = sum(is.na(FootNote))
   )
 
+data %>%
+  summarize(
+    geo_area_name_na = sum(is.na(GeoAreaName))
+  )
 
 ## What is a more efficient way to find missing value for data_clmv all at once?
 data_clmv %>%
