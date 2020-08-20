@@ -196,6 +196,8 @@ data %>%
     footnote_na = sum(is.na(FootNote))
   )
 
+
+
 data %>%
   summarize(
     geo_area_name_na = sum(is.na(GeoAreaName))
@@ -220,8 +222,10 @@ We'll also create our first visualization for the purpose of understanding outli
 
 # Create two vectors: one has an outlier
 # these two vectors are identical except for one value
-sample_data <- c(3,4,7,2,8,10,7,4,5,6,12,15,11,8,5,9,13,500)
+sample_data <- c(3,4,7,2,8,10,7,4,5,6,12,15,11,8,5,9,13,1000000)
 sample_data_1 <- c(3,4,7,2,8,10,7,4,5,6,12,15,11,8,5,9,13,10)
+
+
 
 # Convert two vectors into a tibble 
 # note: Vectors are simply one-column tibbles
@@ -255,19 +259,30 @@ sample_data %>%
 # Create two vectors: one has an outlier
 # these two vectors are identical except for one value - - UNCOMMENT to find out.
 
-# inclass_sample_data <- c(3,4,7,2,8,10,7,4,5,6,12,15,11,8,5,9,13,10)
-# inclass_sample_data_1 <- c(3,4,7,2,8,10,7,4,5,6,12,15,11,8,5,9,13,50000)
+inclass_sample_data <- c(3,4,7,2,8,10,7,4,5,6,12,15,11,8,5,9,13,10)
+inclass_sample_data_1 <- c(3,4,7,2,8,10,7,4,5,6,12,15,11,8,5,9,13,50000)
 
 # Convert two vectors into a tibble 
 # note: Vectors are simply one-column tibbles
 
 # use as.tibble()
+inclass_sample_data <- as.tibble(inclass_sample_data)
+inclass_sample_data_1 <- as.tibble(inclass_sample_data_1)
+
 
 # use summary()
+summary(inclass_sample_data)
+summary(inclass_sample_data_1)
+
 
 # Draw TWO Boxplots for...
 
 # inclass_sample_data
+
+inclass_sample_data_1 %>%
+  ggplot(aes(x = value)) +
+  geom_boxplot()
+
 # inclass_sample_data_1
 
 ```
