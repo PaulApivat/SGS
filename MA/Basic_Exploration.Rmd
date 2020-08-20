@@ -9,31 +9,12 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
-```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 
 ## Actual Exploration
 
-I kept the above for you to see what is provided everytime you click on File -> New File -> RMarkdown. The primary thing for you to know about RMarkdown (for now) is that its a format that you can use to run your analysis and, most importantly, communicate your findings to your stakeholders. 
+The primary thing for you to know about RMarkdown (for now) is that its a format that you can use to run your analysis and, most importantly, communicate your findings to your stakeholders. 
 
-Below we will do some fundamental things that you'll do at the start of every data handling session. 
+First, we will do some fundamental things that you'll want to do at the start of *every* data handling session. 
 
 ```{r, echo=FALSE}
 
@@ -53,9 +34,10 @@ library(reshape2)
 
 We will be exploring Sustainable Development Goals Indicator [statistics](https://unstats.un.org/sdgs/indicators/database/). While there are a variety of indicators and goals, we'll focus our basic data exploration on Goal 4, "Ensure inclusive and equitable quality education and promote lifelong learning opportunities for all", Target 4.4, "By 2030, substantially increase the number of youth and adults who have relevant skills, including technical and vocational skills, for employment, decent jobs and entrepreneurship". 
 
-Here we'll read in the data that is in Excel format. I've stored raw data in the 'data' folder for this project.
+Here we'll read in the data that is in Excel format. I've stored raw data in the 'data' folder for this project (see Files section --> )
 
 Several things are going on at once here, I explain in the comments. Comments are preceded below by a hash tag '#'.
+
 
 ```{r, include=FALSE}
 
@@ -64,10 +46,36 @@ Several things are going on at once here, I explain in the comments. Comments ar
 
 data <- read_xlsx("./data/sdg_goal_4.4.xlsx")
 
+
 # glimpse() function is used to preview the data
 
 glimpse(data)
 ```
+
+## YOUR TURN: Loading and Reading Data
+
+Now is your chance to practice.
+
+```{r, include=FALSE}
+
+# Use the read_xlsx() function to read another file called 'sdg_goal_4.4_clmv.xlsx'
+# Click into the data directory to see
+# read the data, then assign (save) to a variable called "data_clmv"
+
+# your code here
+data_clmv <- read_xlsx("./data/sdg_goal_4.4_clmv.xlsx")
+
+
+
+# Use the glimpse() function to quickly look at your data
+# select and run data_clmv inside glimpse()
+
+# your code here
+glimpse(data_clmv)
+
+```
+
+
 
 ## Exploring the Data
 
@@ -86,6 +94,7 @@ glimpse(data)
 
 # If you just want column names
 names(data)
+colnames(data)
 
 # If you just want the number of rows and columns, use dim()
 dim(data)
@@ -98,11 +107,36 @@ View(data)
 data %>% view()
 
 # str() is a function that provides another snapshot preview of the object
+# str() provides the internet structure of an R object
 # provides more info than glimpse()
 str(data)
 
+
 # there is some overlap with glimpse() and str(), additionally, for numeric data, the summary() function provides quick descriptive statistics (Min, Median, Mean, Max, Quartile)
 summary(data)
+```
+
+## YOUR TURN: Exploring the Data
+
+```{r,include=FALSE}
+
+## Print out column names for data_clmv
+names(data_clmv)
+colnames(data_clmv)
+
+## What if you just want number of rows and columns?
+dim(data_clmv)
+
+## What if you want to 'see' your data?
+View(data_clmv)
+
+
+## What if you want a snapshot preview with some information about each variable? (hint: internal structure of R object)
+str(data_clmv)
+
+
+## What if you want statistical distribution of numeric variables in your object?
+summary(data_clmv)
 ```
 
 ## Missing Data
@@ -123,6 +157,7 @@ The tedious way requires we take 'data', pipe into `summarize()` function and cr
 data %>%
   summarize(goal_na = sum(is.na(Goal)))
 
+
 # Tedious way of finding NA in each column, one-by-one
 data %>%
     summarize(
@@ -138,6 +173,29 @@ data %>%
   summarize_all(~ sum(is.na(.)))
 ```
 
+## YOUR TURN: Missing Data
+
+```{r, include=FALSE}
+
+## Find number of missing values for the following columns:
+## GeoAreaName, Sex, TimeCoverage, Type of skill, Footnote
+
+data %>%
+  summarize(
+    geoareaname_na = sum(is.na(GeoAreaName)),
+    sex_na = sum(is.na(Sex)),
+    time_coverage_na = sum(is.na(TimeCoverage)),
+    type_of_skill_na = sum(is.na(`Type of skill`)),
+    footnote_na = sum(is.na(FootNote))
+  )
+
+
+## What is a more efficient way to find missing value for data_clmv all at once?
+
+
+```
+
+
 ## Outliers
 
 In this section, we'll examine the data to see if there are any outliers. We'll start by creating our own data frame to build an intuition.
@@ -150,7 +208,7 @@ We'll also create our first visualization for the purpose of understanding outli
 
 # Create two vectors: one has an outlier
 # these two vectors are identical except for one value
-sample_data <- c(3,4,7,2,8,10,7,4,5,6,12,15,11,8,5,9,13,1000000)
+sample_data <- c(3,4,7,2,8,10,7,4,5,6,12,15,11,8,5,9,13,500)
 sample_data_1 <- c(3,4,7,2,8,10,7,4,5,6,12,15,11,8,5,9,13,10)
 
 # Convert two vectors into a tibble 
@@ -177,6 +235,31 @@ sample_data %>%
   geom_boxplot()
 
 ```
+
+## YOUR TURN: Outliers
+
+```{r,include=FALSE}
+
+# Create two vectors: one has an outlier
+# these two vectors are identical except for one value - - UNCOMMENT to find out.
+
+# inclass_sample_data <- c(3,4,7,2,8,10,7,4,5,6,12,15,11,8,5,9,13,10)
+# inclass_sample_data_1 <- c(3,4,7,2,8,10,7,4,5,6,12,15,11,8,5,9,13,50000)
+
+# Convert two vectors into a tibble 
+# note: Vectors are simply one-column tibbles
+
+# use as.tibble()
+
+# use summary()
+
+# Draw TWO Boxplots for...
+
+# inclass_sample_data
+# inclass_sample_data_1
+
+```
+
 
 ## Outliers Continue
 
@@ -256,15 +339,32 @@ multiple_histo <- data %>%
 
 # NOTE: multiple_histo has four columns
 
-# use melt() function from reshape2 pakcage to turn from wide into long format
+# use melt() function from reshape2 package to turn from wide into long format
 # now melt_multiple_histo has two columns
 melt_multiple_histo <- melt(multiple_histo)
 
-# plot with facetted boxplots to see four boxplots at the same time
+# plot with faceted boxplots to see four boxplots at the same time
 # note: we need to have some awareness of the data dictionary
 ggplot(data = melt_multiple_histo, mapping = aes(x = variable, y = value)) +
     geom_boxplot() +
     facet_wrap(~variable, scales = 'free')
+```
+
+## YOUR TURN: Outliers Continue
+
+```{r,include=FALSE}
+
+# start with data_clmv
+# select GeoAreaCode, TimePeriod, Value (num / dbl)
+# use mutate to change character to numeric 
+# use histogram to plot each variable - GeoAreaCode, TimePeriod, value - one-by-one
+# save to new variable called 'multiple_histo_clmv'
+
+# use melt() function from reshape2 package to turn from wide into long format
+# save to new variable called 'melt_multiple_histo_clmv'
+
+# using 'melt_multiple_histo_clmv', plot with faceted boxplots to see four boxplots at the same time
+
 ```
 
 ## Compare Countries on their Performance with SDG Goal 4, Target 4.4
@@ -296,4 +396,21 @@ data %>%
     ggplot(aes(x = GeoAreaName, y = avg_value)) +
     geom_boxplot() +
     facet_wrap(~ GeoAreaName, scales = 'free')
+```
+
+## YOUR TURN: Compare CLMV on their Performance with SDG Goal 4, Target 4.4
+
+```{r, include=FALSE}
+# Don't forget to use %>% at the end of each line
+
+# start with data_clmv
+# select GeoAreaName, Value (num / dbl)
+# use mutate to change Value from character to numeric 
+# group_by GeoAreaName
+# use summarize() to find avg_value
+# ungroup
+
+# ggplot(aes(x = GeoAreaName, y = avg_value)) +
+# geom_boxplot() +
+# facet_wrap(~ GeoAreaName, scales = 'free')
 ```
