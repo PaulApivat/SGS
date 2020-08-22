@@ -1,5 +1,5 @@
 # Session info ----
-R version 3.6.3 (2020-02-29)
+R version 4.0.2 (2020-06-22)
 Platform: x86_64-apple-darwin15.6.0 (64-bit)
 Running under: macOS Catalina 10.15.5
 
@@ -16,6 +16,7 @@ library(readxl)
 
 # also xls, read_excel()
 data <- read_xlsx("./data/sdg_goal_4.4.xlsx")
+glimpse(data)
 View(data)
 
 # Selecting ----
@@ -111,4 +112,5 @@ SDGData %>%
     view()
 
 # Next Step: Time Series Data requires TIDY data from LONG to WIDE
+
 
