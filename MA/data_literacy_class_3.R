@@ -110,9 +110,24 @@ data %>%
 
 data %>%
     # select specific columns (de-select others)
-    select(GeoAreaName, Value, Sex, `Type of skill`) %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
     # rename column
-    rename(type_of_skill = `Type of skill`)
+    rename(type_of_skill = `Type of skill`) %>%
+    mutate(
+        Value = as.double(Value)
+    ) %>%
+    filter(GeoAreaName == 'Thailand') %>%
+    filter(TimePeriod == 2018) %>%
+    
+    group_by(type_of_skill) %>%
+    summarize(
+        sum_value = sum(Value)
+    ) %>%
+    arrange(desc(sum_value))
+
+# PICK UP HERE
+# Filter ----
+
 
 
 # Summarizing & Aggregating, Sorting & Arranging ----
