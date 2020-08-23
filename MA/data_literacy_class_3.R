@@ -19,8 +19,57 @@ data <- read_xlsx("./data/sdg_goal_4.4.xlsx")
 glimpse(data)
 View(data)
 
+data_clmv <- read_xlsx("./data/sdg_goal_4.4_clmv.xlsx")
+glimpse(data_clmv)
+
+# Review ----
+
+## What is a more efficient way to find missing value for data all at once?
+data %>%
+    summarize_all(~ sum(is.na(.))) %>%
+    view()
+
+## What are the rows with missing data?
+## Answer: TimeCoverage, UpperBound, LowerBound, BasePeriod, GeoInfoUrl, FootNote, Nature
+
+## DE-Select all columns that have missing values 
+## note: this isn't the way to handle missing values (except when the entire column has missing values)
+
+data %>%
+    select(-TimeCoverage, -UpperBound, -LowerBound, -BasePeriod, -GeoInfoUrl, -FootNote, -Nature) %>%
+    view()
+
+# Now, Instead of de-select, select columns you're interested in
+data %>%
+    select(GeoAreaName, Value, Units, Sex, `Type of skill`) %>%
+    view()
+
+# What TYPE of variables have we selected? This gives us a clue as to how to proceed
+data %>%
+    select(GeoAreaName, Value, Units, Sex, `Type of skill`) %>%
+    str()
+
+## FOR OUTLIERS, we'll focus on NUMERICAL variables
+## This implies we need to CONVERT "Value" to numeric
+
+data %>%
+    select(GeoAreaName, Value, Units, Sex, `Type of skill`) %>%
+    
+    
+# Visualizing each variable, one-by-one to *see* outliers
+data %>%
+    select(GeoAreaName, Value, Units, Sex, `Type of skill`) %>%
+    ggplot(aes(x = GeoAreaName)) +
+    geom_histogram(stat = 'count') +
+    theme(
+        axis.text.x = element_text(angle = 90, hjust = 1)
+    ) +
+    coord_flip()
+
+
 # Selecting ----
 names(data)
+
 
 # Objective: Find Proportion of Youth/Adult with ICT skills by Country & Gender
 
