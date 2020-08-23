@@ -45,16 +45,31 @@ data %>%
     view()
 
 # What TYPE of variables have we selected? This gives us a clue as to how to proceed
+# NOTE through piping (%>%) we can combine new functions (select) with previous functions we learned (str)
 data %>%
     select(GeoAreaName, Value, Units, Sex, `Type of skill`) %>%
     str()
 
 ## FOR OUTLIERS, we'll focus on NUMERICAL variables
 ## This implies we need to CONVERT "Value" to numeric
+## We convert Value to numeric by creating a new column using the mutate() function 
 
 data %>%
     select(GeoAreaName, Value, Units, Sex, `Type of skill`) %>%
+    # review that num and dbl are basically interchangeable
+    # also note: Units = PERCENT (0-100%)
+    mutate(
+        value_dbl = as.double(Value),
+        value_num = as.numeric(Value)
+    ) %>%
+    # Introduction to GGPLOT, aesthetics
+    ggplot(aes(x = value_dbl)) +
+    # geometries for outliers: boxplots, try histograms
+    geom_histogram()
     
+
+
+
     
 # Visualizing each variable, one-by-one to *see* outliers
 data %>%
