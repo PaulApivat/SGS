@@ -29,6 +29,27 @@ data %>%
     summarize_all(~ sum(is.na(.))) %>%
     view()
 
+# Atomic Vectors
+inclass_sample_data <- c(3,4,7,2,8,10,7,4,5,6,12,15,11,8,5,9,13,10)
+inclass_sample_data_1 <- c(3,4,7,2,8,10,7,4,5,6,12,15,11,8,5,9,13,50000)
+
+# Vectors into Tibble
+inclass_sample_data <- as.tibble(inclass_sample_data)
+inclass_sample_data_1 <- as.tibble(inclass_sample_data_1)
+
+# Intro to visualization (for detecting outliers)
+inclass_sample_data_1 %>%
+    ggplot(aes(x = value)) +
+    geom_boxplot()
+
+
+# without outliers
+inclass_sample_data %>%
+    ggplot(aes(x = value)) +
+    geom_boxplot()
+
+# Data Wrangling: Selecting ----
+
 ## What are the rows with missing data?
 ## Answer: TimeCoverage, UpperBound, LowerBound, BasePeriod, GeoInfoUrl, FootNote, Nature
 
@@ -41,21 +62,26 @@ data %>%
 
 # Now, Instead of de-select, select columns you're interested in
 data %>%
-    select(GeoAreaName, Value, Units, Sex, `Type of skill`) %>%
+    select(GeoAreaName, Value, Units, Sex, `Type of skill`, TimePeriod, Time_Detail) %>%
     view()
 
 # What TYPE of variables have we selected? This gives us a clue as to how to proceed
 # NOTE through piping (%>%) we can combine new functions (select) with previous functions we learned (str)
 data %>%
-    select(GeoAreaName, Value, Units, Sex, `Type of skill`) %>%
+    select(GeoAreaName, Value, Units, Sex, `Type of skill`, TimePeriod, Time_Detail) %>%
+    # also try summary()
     str()
+
+## NOTE: We used summary() to determine that there are NO outliers for TimePeriod
+## But we were not able to see for Value - why?
+## Also, Time_Detail is the same as TimePeriod, but we want 'num' data types
 
 ## FOR OUTLIERS, we'll focus on NUMERICAL variables
 ## This implies we need to CONVERT "Value" to numeric
 ## We convert Value to numeric by creating a new column using the mutate() function 
 
 data %>%
-    select(GeoAreaName, Value, Units, Sex, `Type of skill`) %>%
+    select(GeoAreaName, Value, Units, Sex, `Type of skill`, TimePeriod) %>%
     # review that num and dbl are basically interchangeable
     # also note: Units = PERCENT (0-100%)
     mutate(
@@ -63,27 +89,17 @@ data %>%
         value_num = as.numeric(Value)
     ) %>%
     # Introduction to GGPLOT, aesthetics
-    ggplot(aes(x = value_dbl)) +
+    ggplot(aes(x = value_num)) +
     # geometries for outliers: boxplots, try histograms
-    geom_histogram()
+    geom_boxplot()
     
 
+## NOTE: also visually examin TimePeriod with both geom_histogram and geom_boxplot
 
 
-    
-# Visualizing each variable, one-by-one to *see* outliers
-data %>%
-    select(GeoAreaName, Value, Units, Sex, `Type of skill`) %>%
-    ggplot(aes(x = GeoAreaName)) +
-    geom_histogram(stat = 'count') +
-    theme(
-        axis.text.x = element_text(angle = 90, hjust = 1)
-    ) +
-    coord_flip()
 
 
-# Selecting ----
-names(data)
+
 
 
 # Objective: Find Proportion of Youth/Adult with ICT skills by Country & Gender
