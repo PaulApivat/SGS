@@ -96,9 +96,13 @@ data %>%
 
 ## NOTE: also visually examin TimePeriod with both geom_histogram and geom_boxplot
 
+data %>%
+    select(GeoAreaName, Value, Units, Sex, `Type of skill`, TimePeriod) %>%
+    ggplot(aes(x = TimePeriod)) +
+    # geometries for outliers: boxplots, try histograms
+    geom_histogram()
 
-
-
+## PAUSE + REFLECT: What did we just learn about outliers from examining distributions of numeric data?
 
 
 
