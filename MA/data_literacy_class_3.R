@@ -171,8 +171,7 @@ data %>%
     filter(Sex=='FEMALE') %>% view()
 
 
-# NOTE: summarize(total_value) makes less sense than summarize(mean_value
-)
+# NOTE: summarize(total_value) makes less sense than summarize(mean_value)
 # Objective: Group By Country (SUM)
 data %>%
     # select specific columns (de-select others)
@@ -201,6 +200,9 @@ data %>%
     filter(TimePeriod==2018) %>%
     filter(Sex=='FEMALE')
 
+####################################
+### QUESTIONS TO ASK OF THE DATA ###
+####################################
 
 
 
