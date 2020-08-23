@@ -102,8 +102,11 @@ data %>%
     # geometries for outliers: boxplots, try histograms
     geom_histogram()
 
-## PAUSE + REFLECT: What did we just learn about outliers from examining distributions of numeric data?
+###### PAUSE + REFLECT: What did we just learn about outliers from examining distributions of numeric data? ######
 
+## Also teach incrementally highlighting portions of code, then running it. 
+## Also teach view()
+## Also teach filter once in spreadsheet view (similar to excel)
 
 
 # Objective: Find Proportion of Youth/Adult with ICT skills by Country & Gender
@@ -113,16 +116,19 @@ data %>%
     select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
     # rename column
     rename(type_of_skill = `Type of skill`) %>%
+    # mutate creates new column
     mutate(
         Value = as.double(Value)
     ) %>%
+    # filter on condition within parentheses
     filter(GeoAreaName == 'Thailand') %>%
     filter(TimePeriod == 2018) %>%
-    
+    # group_by, followed by summarize
     group_by(type_of_skill) %>%
     summarize(
         sum_value = sum(Value)
     ) %>%
+    # arrange
     arrange(desc(sum_value))
 
 # PICK UP HERE
