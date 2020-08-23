@@ -107,6 +107,8 @@ data %>%
 ## Also teach incrementally highlighting portions of code, then running it. 
 ## Also teach view()
 ## Also teach filter once in spreadsheet view (similar to excel)
+## Also teach how once filter(TimePeriod == xxxx), data is cross sectional
+## (Even without filtering for year, group_by collapses all years into one)
 
 
 # Objective: Find Proportion of Youth/Adult with ICT skills by Country & Gender
@@ -121,7 +123,7 @@ data %>%
         Value = as.double(Value)
     ) %>%
     # filter on condition within parentheses
-    filter(GeoAreaName == 'Thailand') %>%
+    filter(GeoAreaName == 'Thailand') %>% 
     filter(TimePeriod == 2018) %>%
     # group_by, followed by summarize
     group_by(type_of_skill) %>%
@@ -134,14 +136,16 @@ data %>%
 # PICK UP HERE
 # Filter ----
 
+## Teach: if going to summarize across years - use mean in stead of sum, when describing proportions
+## Show TWO cases of summarize - by sum vs mean
 
 
 # Summarizing & Aggregating, Sorting & Arranging ----
 
-# Objective: Group By Country
+# Objective: Group By Country (MEAN)
 data %>%
     # select specific columns (de-select others)
-    select(GeoAreaName, Value, Sex, `Type of skill`) %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
     # rename column
     rename(type_of_skill = `Type of skill`) %>% 
     # group by
@@ -151,8 +155,39 @@ data %>%
         Value = as.numeric(Value)
     ) %>%
 # Group By ----
-    group_by(GeoAreaName, Sex) %>%
-    # tally(sort = TRUE) literally counts the rows
+    group_by(GeoAreaName, Sex, TimePeriod) %>%
+    # summarize (mean) across years for Country & Gender
+    summarize(
+        mean_value = mean(Value)
+    ) %>%
+    # Sorting & Arranging 
+    arrange(desc(mean_value)) %>%
+    # NOTE: come to think of it, it doesn't make sense to add proportions, 
+    # so you want to see proportion by gender - add 'Sex' to group_by
+
+# Filtering ----
+    # filter by MALE, FEMALE, BOTHSEX
+    filter(TimePeriod==2018) %>%
+    filter(Sex=='FEMALE') %>% view()
+
+
+# NOTE: summarize(total_value) makes less sense than summarize(mean_value
+)
+# Objective: Group By Country (SUM)
+data %>%
+    # select specific columns (de-select others)
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    # rename column
+    rename(type_of_skill = `Type of skill`) %>% 
+    # group by
+    # notice the console code reads 88 groups (implying 88 countries)
+    # re-inforce that data-types are always important; show summarize ERROR first
+    mutate(
+        Value = as.numeric(Value)
+    ) %>%
+    # Group By ----
+    group_by(GeoAreaName, Sex, TimePeriod) %>%
+    # summarize (mean) across years for Country & Gender
     summarize(
         total_value = sum(Value)
     ) %>%
@@ -160,10 +195,16 @@ data %>%
     arrange(desc(total_value)) %>%
     # NOTE: come to think of it, it doesn't make sense to add proportions, 
     # so you want to see proportion by gender - add 'Sex' to group_by
+    
+    # Filtering ----
+# filter by MALE, FEMALE, BOTHSEX
+    filter(TimePeriod==2018) %>%
+    filter(Sex=='FEMALE')
 
-# Filtering ----
-    # filter by MALE, FEMALE, BOTHSEX
-    filter(Sex=='FEMALE') %>% view()
+
+
+
+
 
 ## REDO but add ICT Skill Type
 names(data)
