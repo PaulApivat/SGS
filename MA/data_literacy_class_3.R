@@ -331,6 +331,16 @@ data %>%
     ) %>%
     arrange(desc(sum_n))
     
+# SPREAD
+# NOTE: not sure if this is the best place to introduce spread
+data %>%
+    filter(GeoAreaName=="Morocco" | GeoAreaName=="Qatar") %>% 
+    select(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
+    group_by(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
+    tibble::rowid_to_column() %>%
+    spread(key = `Type of skill`, value = Value) %>% view()
+
+
 
 
 ## REDO but add ICT Skill Type
