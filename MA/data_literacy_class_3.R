@@ -337,6 +337,8 @@ data %>%
     filter(GeoAreaName=="Morocco" | GeoAreaName=="Qatar") %>% 
     select(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
     group_by(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
+    # Error: Each row of output must be identified by a unique combination of keys.
+    # rowid_to_column() address this error
     tibble::rowid_to_column() %>%
     spread(key = `Type of skill`, value = Value) %>% view()
 
