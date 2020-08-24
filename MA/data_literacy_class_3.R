@@ -204,7 +204,102 @@ data %>%
 ### QUESTIONS TO ASK OF THE DATA ###
 ####################################
 
+# Which countries did the best for women acquiring ICT Skills in 2017
 
+
+data %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>% 
+    mutate(
+        Value = as.numeric(Value)
+    ) %>%
+    group_by(GeoAreaName, Sex, TimePeriod) %>%
+    summarize(
+        mean_value = mean(Value)
+    ) %>%
+    arrange(desc(mean_value)) %>%
+    filter(TimePeriod==2017) %>%
+    filter(Sex=='FEMALE')
+
+# How about over the entire time period?
+
+data %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>% 
+    mutate(
+        Value = as.numeric(Value)
+    ) %>%
+    # to summarize over extended time period, remove TimePeriod from group_by
+    group_by(GeoAreaName, Sex) %>%
+    summarize(
+        mean_value = mean(Value)
+    ) %>%
+    arrange(desc(mean_value)) %>%
+    filter(Sex=='FEMALE')
+
+# Which countries did the best for men acquiring ICT Skills in 2016?
+
+data %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>% 
+    mutate(
+        Value = as.numeric(Value)
+    ) %>%
+    group_by(GeoAreaName, Sex, TimePeriod) %>%
+    summarize(
+        mean_value = mean(Value)
+    ) %>%
+    arrange(desc(mean_value)) %>%
+    filter(TimePeriod==2016) %>%
+    filter(Sex=='MALE')
+
+# How about over the entire time period?
+
+data %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>% 
+    mutate(
+        Value = as.numeric(Value)
+    ) %>%
+    group_by(GeoAreaName, Sex) %>%
+    summarize(
+        mean_value = mean(Value)
+    ) %>%
+    arrange(desc(mean_value)) %>%
+    filter(Sex=='MALE')
+
+# Which countries did the best for both sex in acquiring ICT Skills in 2015?
+
+
+data %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>% 
+    mutate(
+        Value = as.numeric(Value)
+    ) %>%
+    group_by(GeoAreaName, Sex, TimePeriod) %>%
+    summarize(
+        mean_value = mean(Value)
+    ) %>%
+    arrange(desc(mean_value)) %>%
+    filter(TimePeriod==2015) %>%
+    filter(Sex=='BOTHSEX')
+
+
+# How about over the entire time period?
+
+data %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>% 
+    mutate(
+        Value = as.numeric(Value)
+    ) %>%
+    group_by(GeoAreaName, Sex) %>%
+    summarize(
+        mean_value = mean(Value)
+    ) %>%
+    arrange(desc(mean_value)) %>%
+    filter(Sex=='BOTHSEX')
 
 
 
