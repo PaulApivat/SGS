@@ -301,6 +301,36 @@ data %>%
     arrange(desc(mean_value)) %>%
     filter(Sex=='BOTHSEX')
 
+#### CUT TO Meta-Data ####
+# See ICT skills breakdown
+
+# Which countries, across time, did the best (% of population) for EMAIL specifically?
+
+data %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>% 
+    mutate(
+        Value = as.numeric(Value)
+    ) %>%
+    group_by(GeoAreaName) %>%
+    filter(type_of_skill=='EMAIL') %>%
+    arrange(desc(Value)) %>%
+    summarize(
+        mean_value = mean(Value)
+    ) %>%
+    arrange(desc(mean_value))
+
+# Which countries had the most "TimePeriod"(s) recorded? (As in tally)
+
+data %>%
+    select(GeoAreaName, TimePeriod) %>%
+    group_by(GeoAreaName, TimePeriod) %>%
+    tally(sort = TRUE) %>%
+    summarize(
+        sum_n = sum(n)
+    ) %>%
+    arrange(desc(sum_n))
+    
 
 
 ## REDO but add ICT Skill Type
