@@ -36,14 +36,130 @@ data_clmv <-
 
 ## Review
 
-We covered effficient ways to find all **missing values**. We also looked out **outliers** and, in the process, covered the difference between **vectors** and **data frames (tibbles)**.
+We covered effficient ways to find all **missing values**. 
 
 ```{r, include=FALSE}
-## What is a more efficient way to find missing value for data all at once?
+# What is a more efficient way to find missing value for data all at once?
 data %>%
     summarize_all(~ sum(is.na(.))) 
     # Output results of this operation in spreadsheet view.
 
+# What are the rows with missing data?
+
+```
+
+## Data Wrangling: Selecting
+
+Having explored our data, we're now ready to wrangle our data. Data wrangling, similar to wrestling, is doing various operations **to** the data to answer questions we have about the data. 
+
+```{r,include=FALSE}
+
+# We saw all the columns with missing data
+# De-select those columns with missing values, we will not use them in the subsequent analysis
+
+data %>%
+    select(-TimeCoverage, 
+           -UpperBound, 
+           -LowerBound, 
+           -BasePeriod, 
+           -GeoInfoUrl, 
+           -FootNote, 
+           -Nature) %>%
+    view()
+
+# Alternatively, Instead of de-select, select columns you're interested in
+data %>%
+    select(GeoAreaName, 
+           Value, 
+           Units, 
+           Sex, 
+           `Type of skill`, 
+           TimePeriod, 
+           Time_Detail) %>%
+    view()
+
+# What TYPE of variables have we selected? This gives us a clue as to how to proceed
+
+data %>%
+    select(GeoAreaName, Value, Units, Sex, `Type of skill`, TimePeriod, Time_Detail) %>%
+    # also try summary()
+    str()
+
+
+# Note: through piping (%>%) we can combine new functions (select) with previous functions we learned (str)
+
+
+
+```
+
+## Data Wrangling: Mutate
+
+We were not able to see `Value` - why? What can we do? Oftentime, we'll need to change the **data type** of a variable, similar to how we change **vectors** to **tibble / data frame**, BEFORE we could do any visualization operations.  
+
+We'll note that even though we're in the exploration / wrangling phase, we'll use visualization to help us make sense of the data. 
+
+Note the distinction between visualizing *for yourself* vs visualization *for others*. 
+
+
+```{r, include=FALSE}
+# Quick Review
+
+# Atomic Vectors
+# Try visualizing BEFORE turning into Tibble
+inclass_sample_data <- c(3,4,7,2,8,10,7,4,5,6,12,15,11,8,5,9,13,10)
+inclass_sample_data_1 <- c(3,4,7,2,8,10,7,4,5,6,12,15,11,8,5,9,13,50000)
+
+# Vectors into Tibble
+inclass_sample_data <- as.tibble(inclass_sample_data)
+inclass_sample_data_1 <- as.tibble(inclass_sample_data_1)
+
+# Intro to visualization (for detecting outliers)
+inclass_sample_data %>%
+    ggplot(aes(x = value)) +
+    geom_boxplot()
+
+# With outliers
+inclass_sample_data_1 %>%
+    ggplot(aes(x = value)) +
+    geom_boxplot()
+
+# Mutate allows us to change the variable type within a piping operation
+# highlight before mutate to see Value data type before, then after
+data %>%
+    select(GeoAreaName, Value, Units, Sex, `Type of skill`, TimePeriod) %>%
+    mutate(
+        Value = as.numeric(Value)
+    )
+
+# Note: We took out Time_Detail, leaving only TimePeriod why? Try adding it back above to see.
+
+# Examine Outliers within Data, in the Value column
+
+data %>%
+    select(GeoAreaName, Value, Units, Sex, `Type of skill`, TimePeriod) %>%
+    mutate(
+        Value = as.numeric(Value)
+    ) %>%
+    # quick way to get distribution of numerical variables
+    summary()
+
+# visually explore outliers in Value
+data %>%
+    select(GeoAreaName, Value, Units, Sex, `Type of skill`, TimePeriod) %>%
+    mutate(
+        Value = as.numeric(Value)
+    ) %>%
+    ggplot(aes(x = Value)) +
+    geom_boxplot()
+
+```
+
+
+## Outliers Review / Appendix
+
+We also looked out **outliers** and, in the process, covered the difference between **vectors** and **data frames (tibbles)**.
+
+```{r, include=FALSE}
 
 # Atomic Vectors
 inclass_sample_data <- c(3,4,7,2,8,10,7,4,5,6,12,15,11,8,5,9,13,10)
@@ -63,9 +179,4 @@ inclass_sample_data_1 %>%
     ggplot(aes(x = value)) +
     geom_boxplot()
 
-
 ```
-
-## Data Wrangling: Selecting
-
-
