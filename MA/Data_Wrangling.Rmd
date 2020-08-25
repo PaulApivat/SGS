@@ -194,11 +194,13 @@ data %>%
 
 Previously, by filtering for GeoAreaName ("Thailand") and TimePeriod ("2018"), we saw detailed ranking of proportion of population with sub-types of ICT Skill and gender. Perhaps we want to step back and look at data in the **aggregate**.
 
+What if we wanted to aggregate across Gender (Male, Female, Bothsex), we want to look at the aggregate proportion ranked by ICT Skills, for Thailand in 2018?
+
 # NOTE: Get re-acquainted with meta-data. 
 
 ```{r,include=FALSE}
 
-# What if we SUM across Gender (Male, Female, Bothsex), we want to look at the aggregate proportion ranked by ICT Skills, for Thailand in 2018?
+# What if we aggregate across Gender (Male, Female, Bothsex), we want to look at the aggregate proportion ranked by ICT Skills, for Thailand in 2018?
 
 
 data %>%
@@ -215,12 +217,50 @@ data %>%
     filter(TimePeriod == 2018) %>% 
     # group_by
     group_by(type_of_skill) %>%
+    # When aggregating across Gender within a Year, we'll Sum proportion
     summarize(
         sum_value = sum(Value)
     ) %>%
     # arrange
     arrange(desc(sum_value))
+
+# NOTE: we see that more of the population does COPA, followed by CMFL, PCPR trailing. 
 ```
+
+## Data Wrangling: Aggregating across TimePeriod
+
+Previously, we aggregated across Gender for a specific year ("2018"). What if we wanted to aggregate across years (2014 - 2019), 
+
+```{r,include=FALSE}
+
+data %>%
+    # select specific columns (de-select others)
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    # rename column
+    rename(type_of_skill = `Type of skill`) %>%
+    # mutate creates new column
+    mutate(
+        Value = as.double(Value)
+    ) %>%
+     # filter on condition within parentheses
+    filter(GeoAreaName == 'Thailand') %>% 
+    # We take OUT the TimePeriod filter for a specific year
+    # But we'll add TimePeriod to group_by
+    group_by(type_of_skill, TimePeriod) %>%
+    # When aggregating across years, it makes more sense to find average Value (not Sum)
+    summarize(
+        sum_value = sum(Value)
+    ) %>%
+    # arrange first by sum_value
+    # then also by TimePeriod
+    arrange(desc(sum_value)) %>%
+    arrange(desc(TimePeriod))
+    
+
+    
+
+```
+
 
 ## Outliers Review / Appendix
 
