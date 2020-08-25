@@ -280,19 +280,44 @@ data %>%
     filter(TimePeriod == 2018) %>% 
     # group_by
     group_by(type_of_skill) %>%
-    # When aggregating across Gender within a Year, we'll Sum proportion
+    # When aggregating across Gender within a Year, we can use the mean_value (OR sum, if we want)
     summarize(
-        sum_value = sum(Value)
+        mean_value = mean(Value)
     ) %>%
     ungroup() %>%
     # arrange
-    arrange(desc(sum_value))
+    arrange(desc(mean_value))
 
 # NOTE: we see that more of the population does COPA, followed by CMFL, PCPR trailing. 
 ```
 
-##
+## YOUR TURN: Aggregate data by using group_by(), summarize() and arrange()
 
+Here, we'll look at the average population percentage by type_of_skill.
+
+```{r,include=FALSE}
+
+# Aggregate across Gender (Male, Female, Bothsex), we want to look at the aggregate proportion ranked by ICT Skills, for Cambodia in 2017?
+
+data_clmv %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>%
+    mutate(
+        Value = as.double(Value)
+    ) %>%
+    filter(GeoAreaName == 'Cambodia') %>% 
+    filter(TimePeriod == 2017) %>% 
+    # group_by
+    group_by(type_of_skill) %>%
+    # When aggregating across Gender within a Year, we can use the mean_value 
+    summarize(
+        mean_value = mean(Value)
+    ) %>%
+    ungroup() %>%
+    # arrange
+    arrange(desc(mean_value))
+
+```
 
 ## Data Wrangling: Aggregating across TimePeriod
 
@@ -331,6 +356,30 @@ data %>%
 
 ```
 
+## YOUR TURN: Aggregating Across TimePeriod
+
+Challenge: Since Cambodia's data is only available for 2017, can we aggregate across ICT Skill Types but for EACH gender? (Female, Male, Bothsex)?
+
+Here we'll see the average percentage value for each Gender (across all ICT skill types)
+
+```{r,include=FALSE}
+
+data_clmv %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    # rename column
+    rename(type_of_skill = `Type of skill`) %>%
+    # mutate creates new column
+    mutate(
+        Value = as.double(Value)
+    ) %>%
+    filter(GeoAreaName=='Cambodia') %>%
+    group_by(Sex) %>%
+    summarize(
+        mean_value = mean(Value)
+    ) %>%
+    ungroup()
+```
+
 ## Even More Specific
 
 First we looked at Thailand in 2018, across Gender. Now, what if we wanted to focus specifically on WOMEN with various ICT skills
@@ -351,23 +400,32 @@ data %>%
     filter(GeoAreaName == 'Thailand') %>% 
     # filter on gender
     filter(Sex=='FEMALE') %>%
-    # We take OUT the TimePeriod filter for a specific year
-    # But we'll add TimePeriod to group_by
-    group_by(type_of_skill, TimePeriod) %>%
-    # When aggregating across years, it makes more sense to find average Value (not Sum)
-    summarize(
-        sum_value = sum(Value)
-    ) %>%
-    ungroup() %>%
-    # arrange first by sum_value
-    # then also by TimePeriod (sorting by multiple columns)
-    arrange(desc(sum_value)) %>%
-    arrange(desc(TimePeriod))
+    arrange(desc(Value)) 
 
 # NOTE: When adding filter(Sex=='FEMALE'), the TimePeriod shows only 2018
 # Also examing filter(s) from the View() of data
 
 ```
+
+## YOUR TURN: Even More Specific
+
+Let's look at Cambodia in 2017, specifically focusing on WOMEN with various ICT skills.
+
+```{r,include=FALSE}
+
+data %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>%
+    mutate(
+        Value = as.double(Value)
+    ) %>%
+    filter(GeoAreaName == 'Cambodia') %>% 
+    # filter on gender
+    filter(Sex=='FEMALE') %>%
+    arrange(desc(Value)) 
+
+```
+
 
 ## Examining Data Across Countries
 
@@ -394,8 +452,14 @@ data %>%
 
 # If we start at most macro-level across gender, type_of_skill and time. We'll only group_by(GeoAreaName).
 
+
 ```
 
+## YOUR TURN: Make a cross-country comparison for Thailand and Cambodia
+
+```{r,include=FALSE}
+
+```
 
 ## Asking Specific Questions of the Data
 
@@ -403,7 +467,7 @@ The most important thing we can do as an analyst is to be able to pose questions
 
 ```{r,include=FALSE}
 
-# Which countries did the best for women acquiring ICT Skills in 2017 ?
+# Which countries did the BEST for women acquiring ICT Skills in 2017 ?
 
 data %>%
     select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
@@ -435,7 +499,7 @@ data %>%
     arrange(desc(mean_value)) %>%
     filter(Sex=='FEMALE')
 
-# YOUR TURN: Which countries did the best for men acquiring ICT Skills in 2016?
+# Which countries did the best for men acquiring ICT Skills in 2016?
 
 data %>%
     select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
@@ -451,7 +515,7 @@ data %>%
     filter(TimePeriod==2016) %>%
     filter(Sex=='MALE')
 
-# YOUR TURN: How about over the entire time period?
+# How about over the entire time period?
 
 data %>%
     select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
@@ -501,6 +565,77 @@ data %>%
 
 ```
 
+## YOUR TURN: Asking Specific Questions of the Data
+
+```{r,include=FALSE}
+
+# Which countries did the WORST for women acquiring ICT Skills in 2017 ?
+
+data %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>% 
+    mutate(
+        Value = as.numeric(Value)
+    ) %>%
+    group_by(GeoAreaName, Sex, TimePeriod) %>%
+    summarize(
+        mean_value = mean(Value)
+    ) %>%
+    arrange(mean_value) %>%
+    filter(TimePeriod==2017) %>%
+    filter(Sex=='FEMALE')
+
+# How about women acquiring ICT Skills over the entire time period (2014 - 2019)? Which countries did the WORST?
+
+data %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>% 
+    mutate(
+        Value = as.numeric(Value)
+    ) %>%
+    # to summarize over extended time period, remove TimePeriod from group_by
+    group_by(GeoAreaName, Sex) %>%
+    summarize(
+        mean_value = mean(Value)
+    ) %>%
+    arrange(mean_value) %>%
+    filter(Sex=='FEMALE')
+
+# Which countries did the WORST for men acquiring ICT Skills in 2016?
+
+data %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>% 
+    mutate(
+        Value = as.numeric(Value)
+    ) %>%
+    group_by(GeoAreaName, Sex, TimePeriod) %>%
+    summarize(
+        mean_value = mean(Value)
+    ) %>%
+    arrange(desc(mean_value)) %>%
+    filter(TimePeriod==2016) %>%
+    filter(Sex=='MALE') %>%
+    arrange(mean_value)
+
+
+# How about over the entire time period (2014 - 2019)? Which countries did the WORST for men?
+
+data %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>% 
+    mutate(
+        Value = as.numeric(Value)
+    ) %>%
+    group_by(GeoAreaName, Sex) %>%
+    summarize(
+        mean_value = mean(Value)
+    ) %>%
+    arrange(desc(mean_value)) %>%
+    filter(Sex=='MALE') %>%
+    arrange(mean_value)
+```
+
 ## Asking Specific Question: Specific ICT Skills Breakdown
 
 ```{r,include=FALSE}
@@ -534,6 +669,44 @@ data %>%
 
 ```
 
+## YOUR TURN: asking Specific Question: Specific ICT Skills Breakdown
+
+```{r,include=FALSE}
+
+
+# Which countries, across time, did the best (% of population) for PCPR specifically? (programming)
+
+data %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>% 
+    mutate(
+        Value = as.numeric(Value)
+    ) %>%
+    group_by(GeoAreaName) %>%
+    filter(type_of_skill=='PCPR') %>%
+    arrange(desc(Value)) %>%
+    summarize(
+        mean_value = mean(Value)
+    ) %>%
+    arrange(desc(mean_value))
+
+# Which countries did the worst?
+
+data %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>% 
+    mutate(
+        Value = as.numeric(Value)
+    ) %>%
+    group_by(GeoAreaName) %>%
+    filter(type_of_skill=='PCPR') %>%
+    arrange(desc(Value)) %>%
+    summarize(
+        mean_value = mean(Value)
+    ) %>%
+    arrange(mean_value)
+
+```
 
 ## TIDY DATA PRINCIPLE: Spread & Pivot_Wider
 
