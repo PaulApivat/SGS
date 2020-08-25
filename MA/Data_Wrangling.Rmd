@@ -78,6 +78,10 @@ data %>%
            Time_Detail) %>%
     view()
 
+data %>%
+    select(Sex, Value, everything()) %>%
+    view()
+
 # What TYPE of variables have we selected? This gives us a clue as to how to proceed
 
 data %>%
@@ -95,10 +99,12 @@ data %>%
 ```{r,include=FALSE}
 
 # Select 3-4 variables (columns) from data_clmv
-# then pipe the summary() function from those variables
+# then pipe the summary() function from those variables (also try str() and view() )
 data_clmv %>%
     select(GeoAreaName, Value, Units, Sex, `Type of skill`, TimePeriod, Time_Detail) %>%
     summary()
+
+# Use the everything() function within select() to help you re-organized the columns
 
 ```
 
@@ -229,8 +235,21 @@ data %>%
     filter(TimePeriod == 2018) %>% 
     arrange(desc(Value))
 
+
 # NOTE: Here we see that for Thailand in 2018, in terms of ICT SKills and Gender, the highest proportion were Women and the COPA skill. Followed closely by WOmen and CMFL skill. 
 
+# Filter for Multiple Values (e.g., Thailand and Cambodia)
+
+data %>%
+    filter(GeoAreaName %in% c('Thailand', 'Cambodia')) %>% view()
+
+# Reverse conditional logic with filter
+
+data %>%
+    filter(!GeoAreaName %in% c('Thailand', 'Cambodia')) %>% view()
+
+data %>%
+    filter(!Sex=='BOTHSEX')
 ```
 
 ## YOUR TURN: Subsetting through filter()
