@@ -50,7 +50,7 @@ data %>%
 
 ## Data Wrangling: Selecting
 
-Having explored our data, we're now ready to wrangle our data. Data wrangling, similar to wrestling, is doing various operations **to** the data to answer questions we have about the data. 
+Having explored our data, we're now ready to wrangle our data. [Data wrangling](https://en.wikipedia.org/wiki/Data_wrangling), similar to wrestling, is doing various operations **to** the data to answer questions we have about the data. Also called 'data munging', it's a transformation process to set the data up for further use, like analytics reporting and dashboarding, as one example. 
 
 ```{r,include=FALSE}
 
@@ -88,9 +88,20 @@ data %>%
 
 # Note: through piping (%>%) we can combine new functions (select) with previous functions we learned (str)
 
+```
 
+## YOUR TURN: use select() and summary() to get the distribution of numerical data
+
+```{r,include=FALSE}
+
+# Select 3-4 variables (columns) from data_clmv
+# then pipe the summary() function from those variables
+data_clmv %>%
+    select(GeoAreaName, Value, Units, Sex, `Type of skill`, TimePeriod, Time_Detail) %>%
+    summary()
 
 ```
+
 
 ## Data Wrangling: Mutate
 
@@ -155,6 +166,38 @@ data %>%
 
 ```
 
+## YOUR TURN: Using mutate() function to change data-type for Outlier detection
+
+```{r,include=FALSE}
+
+# Use the mutate() function to change the variable type within a piping operation in data_clmv
+# Highlight what happens BEFORE and AFTER using the mutate() function
+data_clmv %>%
+    select(GeoAreaName, Value, Units, Sex, `Type of skill`, TimePeriod) %>%
+    mutate(
+        Value = as.numeric(Value)
+    ) 
+
+# Now that you've transfered Value from chr to 'num' (numeric), re-run the summary function
+data_clmv %>%
+    select(GeoAreaName, Value, Units, Sex, `Type of skill`, TimePeriod) %>%
+    mutate(
+        Value = as.numeric(Value)
+    ) %>%
+    summary()
+
+# Visually explore outliers using geom_boxplot
+data_clmv %>%
+    select(GeoAreaName, Value, Units, Sex, `Type of skill`, TimePeriod) %>%
+    mutate(
+        Value = as.numeric(Value)
+    ) %>%
+    ggplot(aes(x = Value)) +
+    geom_boxplot()
+
+```
+
+
 ## Data Wrangling: Subsetting through filter()
 
 Now that we've examined potential outliers (and found none), we might want to **subset** our data to make our work (i.e., exploring/analyzing/visualizing) more *manageable*. 
@@ -189,6 +232,26 @@ data %>%
 # NOTE: Here we see that for Thailand in 2018, in terms of ICT SKills and Gender, the highest proportion were Women and the COPA skill. Followed closely by WOmen and CMFL skill. 
 
 ```
+
+## YOUR TURN: Subsetting through filter()
+
+```{r,include=FALSE}
+
+# Find proportion of Gender & ICT SKills for Cambodia in 2017.
+data_clmv %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>%
+    mutate(
+        Value = as.double(Value)
+    ) %>%
+    filter(GeoAreaName == 'Cambodia') %>% 
+    filter(TimePeriod == 2017) %>% 
+    arrange(desc(Value))
+
+# What gender and type_of_skill had the highest percentage in 2017?
+
+```
+
 
 ## Data Wrangling: Aggregate data by using group_by(), summarize(), arrange()
 
@@ -227,6 +290,9 @@ data %>%
 
 # NOTE: we see that more of the population does COPA, followed by CMFL, PCPR trailing. 
 ```
+
+##
+
 
 ## Data Wrangling: Aggregating across TimePeriod
 
