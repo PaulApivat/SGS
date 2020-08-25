@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Review
+## Setup: Review
 
 We covered a fair amount last time, we'll re-run some code to get setup:
 
@@ -22,18 +22,50 @@ library(tidyverse)
 library(readxl)
 
 # Read Data, Assign to Data Object
+data <- read_xlsx("./data/sdg_goal_4.4.xlsx")
+glimpse(data)
 
-getwd()
+# Use another function, similar to glimpse() to explore
+
+# Your Turn: Read data, assign to data_clmv
+# use read_xlsx() function
+data_clmv <- 
 
 
 ```
 
-## Including Plots
+## Review
 
-You can also embed plots, for example:
+We covered effficient ways to find all **missing values**. We also looked out **outliers** and, in the process, covered the difference between **vectors** and **data frames (tibbles)**.
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r, include=FALSE}
+## What is a more efficient way to find missing value for data all at once?
+data %>%
+    summarize_all(~ sum(is.na(.))) 
+    # Output results of this operation in spreadsheet view.
+
+
+# Atomic Vectors
+inclass_sample_data <- c(3,4,7,2,8,10,7,4,5,6,12,15,11,8,5,9,13,10)
+inclass_sample_data_1 <- c(3,4,7,2,8,10,7,4,5,6,12,15,11,8,5,9,13,50000)
+
+# Vectors into Tibble
+inclass_sample_data <- as.tibble(inclass_sample_data)
+inclass_sample_data_1 <- as.tibble(inclass_sample_data_1)
+
+# Intro to visualization (for detecting outliers)
+inclass_sample_data %>%
+    ggplot(aes(x = value)) +
+    geom_boxplot()
+
+# With outliers
+inclass_sample_data_1 %>%
+    ggplot(aes(x = value)) +
+    geom_boxplot()
+
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+## Data Wrangling: Selecting
+
+
