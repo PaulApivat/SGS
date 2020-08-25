@@ -342,7 +342,13 @@ data %>%
     tibble::rowid_to_column() %>%
     spread(key = `Type of skill`, value = Value) %>% view()
 
+# PIVOT_WIDER - even better than Spread
 
+data %>%
+    filter(GeoAreaName=="Morocco" | GeoAreaName=="Qatar") %>% 
+    select(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
+    group_by(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
+    pivot_wider(names_from = `Type of skill`, values_from = Value) %>% view()
 
 
 ## REDO but add ICT Skill Type
