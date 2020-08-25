@@ -144,6 +144,7 @@ data %>%
     summary()
 
 # visually explore outliers in Value
+# also try geom_histogram
 data %>%
     select(GeoAreaName, Value, Units, Sex, `Type of skill`, TimePeriod) %>%
     mutate(
@@ -151,6 +152,19 @@ data %>%
     ) %>%
     ggplot(aes(x = Value)) +
     geom_boxplot()
+
+```
+
+## Data Wrangling: Subsetting through filter()
+
+Now that we've examined potential outliers (and found none), we might want to **subset** our data to make our work (i.e., exploring/analyzing/visualizing) more *manageable*. 
+
+We can begin asking specific questions of our data.
+
+
+
+```{r,include=FALSE}
+
 
 ```
 
