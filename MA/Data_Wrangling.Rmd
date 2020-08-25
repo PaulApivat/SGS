@@ -190,7 +190,7 @@ data %>%
 
 ```
 
-## Data Wrangling: Aggregate data by using group_by() and summarize()
+## Data Wrangling: Aggregate data by using group_by(), summarize(), arrange()
 
 Previously, by filtering for GeoAreaName ("Thailand") and TimePeriod ("2018"), we saw detailed ranking of proportion of population with sub-types of ICT Skill and gender. Perhaps we want to step back and look at data in the **aggregate**.
 
@@ -221,6 +221,7 @@ data %>%
     summarize(
         sum_value = sum(Value)
     ) %>%
+    ungroup() %>%
     # arrange
     arrange(desc(sum_value))
 
@@ -229,7 +230,7 @@ data %>%
 
 ## Data Wrangling: Aggregating across TimePeriod
 
-Previously, we aggregated across Gender for a specific year ("2018"). What if we wanted to aggregate across years (2014 - 2019), 
+Previously, we aggregated across Gender for a specific year ("2018"). What if we wanted to aggregate across years (2014 & 2018), 
 
 ```{r,include=FALSE}
 
@@ -251,39 +252,222 @@ data %>%
     summarize(
         sum_value = sum(Value)
     ) %>%
+    ungroup() %>%
     # arrange first by sum_value
-    # then also by TimePeriod
+    # then also by TimePeriod (sorting by multiple columns)
     arrange(desc(sum_value)) %>%
     arrange(desc(TimePeriod))
-    
 
+# What if we wanted to sum across both years (2014 & 2018)
+# Take out TimePeriod
+# Change sum_value to mean_value
     
 
 ```
 
+## Even More Specific
 
-## Outliers Review / Appendix
+First we looked at Thailand in 2018, across Gender. Now, what if we wanted to focus specifically on WOMEN with various ICT skills
 
-We also looked out **outliers** and, in the process, covered the difference between **vectors** and **data frames (tibbles)**.
 
-```{r, include=FALSE}
+```{r,include=FALSE}
 
-# Atomic Vectors
-inclass_sample_data <- c(3,4,7,2,8,10,7,4,5,6,12,15,11,8,5,9,13,10)
-inclass_sample_data_1 <- c(3,4,7,2,8,10,7,4,5,6,12,15,11,8,5,9,13,50000)
+data %>%
+    # select specific columns (de-select others)
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    # rename column
+    rename(type_of_skill = `Type of skill`) %>%
+    # mutate creates new column
+    mutate(
+        Value = as.double(Value)
+    ) %>%
+     # filter on condition within parentheses
+    filter(GeoAreaName == 'Thailand') %>% 
+    # filter on gender
+    filter(Sex=='FEMALE') %>%
+    # We take OUT the TimePeriod filter for a specific year
+    # But we'll add TimePeriod to group_by
+    group_by(type_of_skill, TimePeriod) %>%
+    # When aggregating across years, it makes more sense to find average Value (not Sum)
+    summarize(
+        sum_value = sum(Value)
+    ) %>%
+    ungroup() %>%
+    # arrange first by sum_value
+    # then also by TimePeriod (sorting by multiple columns)
+    arrange(desc(sum_value)) %>%
+    arrange(desc(TimePeriod))
 
-# Vectors into Tibble
-inclass_sample_data <- as.tibble(inclass_sample_data)
-inclass_sample_data_1 <- as.tibble(inclass_sample_data_1)
-
-# Intro to visualization (for detecting outliers)
-inclass_sample_data %>%
-    ggplot(aes(x = value)) +
-    geom_boxplot()
-
-# With outliers
-inclass_sample_data_1 %>%
-    ggplot(aes(x = value)) +
-    geom_boxplot()
+# NOTE: When adding filter(Sex=='FEMALE'), the TimePeriod shows only 2018
+# Also examing filter(s) from the View() of data
 
 ```
+
+## Examining Data Across Countries
+
+We'll now use the functions we've learned to zoom out and examine proportion of population with various ICT Skills **across** type_of_skill, gender and time; making these comparisons between countries.
+
+```{r,include=FALSE}
+
+data %>%
+    # select specific columns (de-select others)
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    # rename column
+    rename(type_of_skill = `Type of skill`) %>%
+    # mutate creates new column
+    mutate(
+        Value = as.double(Value)
+    ) %>%
+    # instead of filtering, jump to group_by
+    group_by(GeoAreaName) %>%
+    summarize(
+        mean_value = mean(Value)
+    ) %>%
+    ungroup() %>%
+    arrange(desc(mean_value))
+
+# If we start at most macro-level across gender, type_of_skill and time. We'll only group_by(GeoAreaName).
+
+```
+
+
+## Asking Specific Questions of the Data
+
+The most important thing we can do as an analyst is to be able to pose questions of our data. Here are some specific questions we could ask:
+
+```{r,include=FALSE}
+
+# Which countries did the best for women acquiring ICT Skills in 2017 ?
+
+data %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>% 
+    mutate(
+        Value = as.numeric(Value)
+    ) %>%
+    group_by(GeoAreaName, Sex, TimePeriod) %>%
+    summarize(
+        mean_value = mean(Value)
+    ) %>%
+    arrange(desc(mean_value)) %>%
+    filter(TimePeriod==2017) %>%
+    filter(Sex=='FEMALE')
+
+# How about women acquiring ICT Skills over the entire time period (2014 - 2019)?
+
+data %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>% 
+    mutate(
+        Value = as.numeric(Value)
+    ) %>%
+    # to summarize over extended time period, remove TimePeriod from group_by
+    group_by(GeoAreaName, Sex) %>%
+    summarize(
+        mean_value = mean(Value)
+    ) %>%
+    arrange(desc(mean_value)) %>%
+    filter(Sex=='FEMALE')
+
+# YOUR TURN: Which countries did the best for men acquiring ICT Skills in 2016?
+
+data %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>% 
+    mutate(
+        Value = as.numeric(Value)
+    ) %>%
+    group_by(GeoAreaName, Sex, TimePeriod) %>%
+    summarize(
+        mean_value = mean(Value)
+    ) %>%
+    arrange(desc(mean_value)) %>%
+    filter(TimePeriod==2016) %>%
+    filter(Sex=='MALE')
+
+# YOUR TURN: How about over the entire time period?
+
+data %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>% 
+    mutate(
+        Value = as.numeric(Value)
+    ) %>%
+    group_by(GeoAreaName, Sex) %>%
+    summarize(
+        mean_value = mean(Value)
+    ) %>%
+    arrange(desc(mean_value)) %>%
+    filter(Sex=='MALE')
+
+# YOUR TURN: Which countries did the best for both sex in acquiring ICT Skills in 2015?
+
+
+data %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>% 
+    mutate(
+        Value = as.numeric(Value)
+    ) %>%
+    group_by(GeoAreaName, Sex, TimePeriod) %>%
+    summarize(
+        mean_value = mean(Value)
+    ) %>%
+    arrange(desc(mean_value)) %>%
+    filter(TimePeriod==2015) %>%
+    filter(Sex=='BOTHSEX')
+
+
+# YOUR TURN: How about over the entire time period?
+
+data %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>% 
+    mutate(
+        Value = as.numeric(Value)
+    ) %>%
+    group_by(GeoAreaName, Sex) %>%
+    summarize(
+        mean_value = mean(Value)
+    ) %>%
+    arrange(desc(mean_value)) %>%
+    filter(Sex=='BOTHSEX')
+
+```
+
+## Asking Specific Question: Specific ICT Skills Breakdown
+
+```{r,include=FALSE}
+
+# Which countries, across time, did the best (% of population) for EMAIL specifically?
+
+data %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>% 
+    mutate(
+        Value = as.numeric(Value)
+    ) %>%
+    group_by(GeoAreaName) %>%
+    filter(type_of_skill=='EMAIL') %>%
+    arrange(desc(Value)) %>%
+    summarize(
+        mean_value = mean(Value)
+    ) %>%
+    arrange(desc(mean_value))
+
+# Which countries had the most "TimePeriod"(s) recorded? (As in tally)
+
+data %>%
+    select(GeoAreaName, TimePeriod) %>%
+    group_by(GeoAreaName, TimePeriod) %>%
+    tally(sort = TRUE) %>%
+    summarize(
+        sum_n = sum(n)
+    ) %>%
+    arrange(desc(sum_n))
+
+```
+
+
+## TIDY DATA PRINCIPLE: Spread & Pivot_Wider
+
