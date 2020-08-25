@@ -1,0 +1,39 @@
+---
+title: "Data_Wrangling"
+author: "Paul Apivat Hanvongse"
+date: "8/25/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Review
+
+We covered a fair amount last time, we'll re-run some code to get setup:
+
+```{r, include=FALSE}
+# Take note of our software environment
+sessionInfo()
+
+# Load Libraries & Packages
+library(tidyverse)
+library(readxl)
+
+# Read Data, Assign to Data Object
+
+getwd()
+
+
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
