@@ -301,7 +301,8 @@ data %>%
     group_by(type_of_skill) %>%
     # When aggregating across Gender within a Year, we can use the mean_value (OR sum, if we want)
     summarize(
-        mean_value = mean(Value)
+        mean_value = mean(Value),
+        median_value = median(Value)
     ) %>%
     ungroup() %>%
     # arrange
