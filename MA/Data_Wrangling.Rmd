@@ -159,15 +159,68 @@ data %>%
 
 Now that we've examined potential outliers (and found none), we might want to **subset** our data to make our work (i.e., exploring/analyzing/visualizing) more *manageable*. 
 
-We can begin asking specific questions of our data.
+We can begin asking specific questions of our data. What if we wanted to find proportion of Youth/Adult with ICT skills by Country & Gender?
 
+We'll quickly find that we need more specific questions with `filter()`
+
+# NOTE: Get re-acquainted with meta-data. 
 
 
 ```{r,include=FALSE}
 
+# We need more specific questions. We can do this by using filter()
+
+# What if we wanted proportion of Gender & ICT Skills for Thailand in 2018?
+
+data %>%
+    # select specific columns (de-select others)
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    # rename column
+    rename(type_of_skill = `Type of skill`) %>%
+    # mutate creates new column
+    mutate(
+        Value = as.double(Value)
+    ) %>%
+     # filter on condition within parentheses
+    filter(GeoAreaName == 'Thailand') %>% 
+    filter(TimePeriod == 2018) %>% 
+    arrange(desc(Value))
+
+# NOTE: Here we see that for Thailand in 2018, in terms of ICT SKills and Gender, the highest proportion were Women and the COPA skill. Followed closely by WOmen and CMFL skill. 
 
 ```
 
+## Data Wrangling: Aggregate data by using group_by() and summarize()
+
+Previously, by filtering for GeoAreaName ("Thailand") and TimePeriod ("2018"), we saw detailed ranking of proportion of population with sub-types of ICT Skill and gender. Perhaps we want to step back and look at data in the **aggregate**.
+
+# NOTE: Get re-acquainted with meta-data. 
+
+```{r,include=FALSE}
+
+# What if we SUM across Gender (Male, Female, Bothsex), we want to look at the aggregate proportion ranked by ICT Skills, for Thailand in 2018?
+
+
+data %>%
+    # select specific columns (de-select others)
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    # rename column
+    rename(type_of_skill = `Type of skill`) %>%
+    # mutate creates new column
+    mutate(
+        Value = as.double(Value)
+    ) %>%
+     # filter on condition within parentheses
+    filter(GeoAreaName == 'Thailand') %>% 
+    filter(TimePeriod == 2018) %>% 
+    # group_by
+    group_by(type_of_skill) %>%
+    summarize(
+        sum_value = sum(Value)
+    ) %>%
+    # arrange
+    arrange(desc(sum_value))
+```
 
 ## Outliers Review / Appendix
 
