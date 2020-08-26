@@ -295,7 +295,7 @@ data_clmv %>%
 
 Previously, by filtering for GeoAreaName ("Thailand") and TimePeriod ("2018"), we saw detailed ranking of proportion of population with sub-types of ICT Skill and gender. Perhaps we want to step back and look at data in the **aggregate**.
 
-What if we wanted to aggregate across Gender (Male, Female, Bothsex), we want to look at the aggregate proportion ranked by ICT Skills, for Thailand in 2018?
+What if we wanted to aggregate across Gender (Male, Female, Bothsex), we want to look at the aggregate proportion who have ICT Skills, for Thailand in 2018?
 
 # NOTE: Get re-acquainted with meta-data. 
 
@@ -355,6 +355,30 @@ data_clmv %>%
     ungroup() %>%
     # arrange
     arrange(desc(mean_value))
+
+## Run the following code to look at Documentation
+
+?summary
+?summarize
+?summarise
+
+## Use all the useful functions in summarize()
+
+data_clmv %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>%
+    mutate(
+        Value = as.double(Value)
+    ) %>%
+    filter(GeoAreaName == 'Cambodia') %>% 
+    filter(TimePeriod == 2017) %>% 
+    # group_by
+    group_by(type_of_skill) %>%
+    ## Your code here
+    
+    ungroup() 
+    # arrange
+    
 
 ```
 
