@@ -161,7 +161,7 @@ data %>%
     summary()
 
 # visually explore outliers in Value
-# also try geom_histogram
+# also try geom_histogram, then try with bins = 30, then try color = 'white'
 data %>%
     select(GeoAreaName, Value, Units, Sex, `Type of skill`, TimePeriod) %>%
     mutate(
@@ -169,6 +169,7 @@ data %>%
     ) %>%
     ggplot(aes(x = Value)) +
     geom_boxplot()
+    #geom_histogram(bins = 30, color = 'white')
 
 ```
 
@@ -200,6 +201,24 @@ data_clmv %>%
     ) %>%
     ggplot(aes(x = Value)) +
     geom_boxplot()
+
+
+# Use mutate to change other data types
+data_clmv %>%
+    mutate(
+        goal_chr = as.character(Goal),
+        indicator_dbl = as.factor(Indicator),
+        value_num = as.numeric(Value)
+    ) %>%
+    select(goal_chr, indicator_dbl, value_num, everything())
+
+# Numeric Constants
+options(digits = 5)
+indicator_x <- as.numeric(as.character("4.1"))
+
+# WARNING: 
+# Two Decimals Problematic
+indicator_y <- as.numeric(as.character("4.1.1"))
 
 ```
 
