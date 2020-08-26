@@ -129,6 +129,8 @@ Note the distinction between visualizing *for yourself* vs visualization *for ot
 inclass_sample_data <- c(3,4,7,2,8,10,7,4,5,6,12,15,11,8,5,9,13,10)
 inclass_sample_data_1 <- c(3,4,7,2,8,10,7,4,5,6,12,15,11,8,5,9,13,50000)
 
+class(inclass_sample_data)
+
 # Vectors into Tibble
 inclass_sample_data <- as.tibble(inclass_sample_data)
 inclass_sample_data_1 <- as.tibble(inclass_sample_data_1)
