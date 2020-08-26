@@ -101,8 +101,11 @@ data %>%
 # Select 3-4 variables (columns) from data_clmv
 # then pipe the summary() function from those variables (also try str() and view() )
 data_clmv %>%
-    select(GeoAreaName, Value, Units, Sex, `Type of skill`, TimePeriod, Time_Detail) %>%
-    summary()
+    # Fill your code in here
+    select() %>%
+    # one more line
+
+# Hint: select(GeoAreaName, Value, Units, Sex, `Type of skill`, TimePeriod, Time_Detail) %>%
 
 # Use the everything() function within select() to help you re-organized the columns
 
@@ -122,7 +125,7 @@ Note the distinction between visualizing *for yourself* vs visualization *for ot
 # Quick Review
 
 # Atomic Vectors
-# Try visualizing BEFORE turning into Tibble
+# NOTE: Try visualizing BEFORE turning into Tibble
 inclass_sample_data <- c(3,4,7,2,8,10,7,4,5,6,12,15,11,8,5,9,13,10)
 inclass_sample_data_1 <- c(3,4,7,2,8,10,7,4,5,6,12,15,11,8,5,9,13,50000)
 
@@ -177,40 +180,49 @@ data %>%
 
 ```{r,include=FALSE}
 
-# Use the mutate() function to change the variable type within a piping operation in data_clmv
+# Use the mutate() function to change the variable type - from chr to numeric within a piping operation in data_clmv
 # Highlight what happens BEFORE and AFTER using the mutate() function
 data_clmv %>%
     select(GeoAreaName, Value, Units, Sex, `Type of skill`, TimePeriod) %>%
     mutate(
-        Value = as.numeric(Value)
+        # your code here
     ) 
 
+# hint: Value = as.numeric(Value)
+
+
 # Now that you've transfered Value from chr to 'num' (numeric), re-run the summary function
-data_clmv %>%
-    select(GeoAreaName, Value, Units, Sex, `Type of skill`, TimePeriod) %>%
-    mutate(
-        Value = as.numeric(Value)
-    ) %>%
+
+# Your code here 
     summary()
 
+    
 # Visually explore outliers using geom_boxplot
 data_clmv %>%
     select(GeoAreaName, Value, Units, Sex, `Type of skill`, TimePeriod) %>%
     mutate(
         Value = as.numeric(Value)
     ) %>%
-    ggplot(aes(x = Value)) +
-    geom_boxplot()
+    # your code here
+    
+    
+    
+# HINT: ggplot(aes(x = Value)) +
+# HINT: geom_boxplot()
 
 
 # Use mutate to change other data types
 data_clmv %>%
     mutate(
-        goal_chr = as.character(Goal),
-        indicator_dbl = as.factor(Indicator),
-        value_num = as.numeric(Value)
+      # your code here
     ) %>%
     select(goal_chr, indicator_dbl, value_num, everything())
+
+
+# Hint: goal_chr = as.character(Goal),
+# Hint: indicator_dbl = as.factor(Indicator),
+# Hint: value_num = as.numeric(Value)
+
 
 # Numeric Constants
 options(digits = 5)
@@ -282,9 +294,13 @@ data_clmv %>%
     mutate(
         Value = as.double(Value)
     ) %>%
-    filter(GeoAreaName == 'Cambodia') %>% 
-    filter(TimePeriod == 2017) %>% 
+    # your code here
     arrange(desc(Value))
+
+
+
+# HINT: filter(GeoAreaName == 'Cambodia') %>% 
+# HINT: filter(TimePeriod == 2017) %>% 
 
 # What gender and type_of_skill had the highest percentage in 2017?
 
@@ -301,7 +317,7 @@ What if we wanted to aggregate across Gender (Male, Female, Bothsex), we want to
 
 ```{r,include=FALSE}
 
-# What if we aggregate across Gender (Male, Female, Bothsex), we want to look at the aggregate proportion ranked by ICT Skills, for Thailand in 2018?
+# What if we aggregate across Gender (Male, Female, Bothsex), we want to look at the aggregate proportion by ICT Skills, for Thailand in 2018?
 
 
 data %>%
@@ -336,7 +352,7 @@ Here, we'll look at the average population percentage by type_of_skill.
 
 ```{r,include=FALSE}
 
-# Aggregate across Gender (Male, Female, Bothsex), we want to look at the aggregate proportion ranked by ICT Skills, for Cambodia in 2017?
+# Aggregate across Gender (Male, Female, Bothsex), we want to look at the aggregate proportion by ICT Skills, for Cambodia in 2017?
 
 data_clmv %>%
     select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
@@ -346,15 +362,15 @@ data_clmv %>%
     ) %>%
     filter(GeoAreaName == 'Cambodia') %>% 
     filter(TimePeriod == 2017) %>% 
-    # group_by
-    group_by(type_of_skill) %>%
-    # When aggregating across Gender within a Year, we can use the mean_value 
-    summarize(
-        mean_value = mean(Value)
-    ) %>%
-    ungroup() %>%
-    # arrange
+
+    # your code here
+    
     arrange(desc(mean_value))
+
+
+# HINT: group_by(type_of_skill) %>%
+# HINT: summarize(mean_value = mean(Value)) %>%
+# HINT: ungroup() %>%
 
 ## Run the following code to look at Documentation
 
@@ -402,9 +418,10 @@ data %>%
     # We take OUT the TimePeriod filter for a specific year
     # But we'll add TimePeriod to group_by
     group_by(type_of_skill, TimePeriod) %>%
-    # When aggregating across years, it makes more sense to find average Value (not Sum)
+    # group_by(type_of_skill, TimePeriod) means aggregating across Sex
     summarize(
-        sum_value = sum(Value)
+        sum_value = sum(Value),
+        mean_value = mean(Value)
     ) %>%
     ungroup() %>%
     # arrange first by sum_value
@@ -419,7 +436,7 @@ data %>%
 
 ```
 
-## YOUR TURN: Aggregating Across TimePeriod
+## YOUR TURN: Aggregating Across Gender
 
 Challenge: Since Cambodia's data is only available for 2017, can we aggregate across ICT Skill Types but for EACH gender? (Female, Male, Bothsex)?
 
@@ -436,11 +453,14 @@ data_clmv %>%
         Value = as.double(Value)
     ) %>%
     filter(GeoAreaName=='Cambodia') %>%
-    group_by(Sex) %>%
+    # your code here
     summarize(
         mean_value = mean(Value)
     ) %>%
     ungroup()
+
+
+# HINT: group_by(Sex) %>%
 ```
 
 ## Even More Specific
@@ -482,10 +502,14 @@ data %>%
     mutate(
         Value = as.double(Value)
     ) %>%
-    filter(GeoAreaName == 'Cambodia') %>% 
-    # filter on gender
+    # your code here
+    # your code here
     filter(Sex=='FEMALE') %>%
     arrange(desc(Value)) 
+
+
+# HINT: filter(GeoAreaName == 'Cambodia') %>% 
+# HINT: filter(Sex=='FEMALE') %>%
 
 ```
 
@@ -562,7 +586,7 @@ data %>%
     arrange(desc(mean_value)) %>%
     filter(Sex=='FEMALE')
 
-# Which countries did the best for men acquiring ICT Skills in 2016?
+# YOUR TURN: Which countries did the best for men acquiring ICT Skills in 2016?
 
 data %>%
     select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
@@ -575,8 +599,12 @@ data %>%
         mean_value = mean(Value)
     ) %>%
     arrange(desc(mean_value)) %>%
-    filter(TimePeriod==2016) %>%
-    filter(Sex=='MALE')
+    # your code here
+    
+    
+    
+# HINT: filter(TimePeriod==2016) %>%
+# HINT: filter(Sex=='MALE')
 
 # How about over the entire time period?
 
@@ -595,7 +623,6 @@ data %>%
 
 # YOUR TURN: Which countries did the best for both sex in acquiring ICT Skills in 2015?
 
-
 data %>%
     select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
     rename(type_of_skill = `Type of skill`) %>% 
@@ -607,11 +634,14 @@ data %>%
         mean_value = mean(Value)
     ) %>%
     arrange(desc(mean_value)) %>%
-    filter(TimePeriod==2015) %>%
-    filter(Sex=='BOTHSEX')
+    # your code here
+    # your code here
+    
+    
+# HINT: filter(TimePeriod==2015) %>%
+# HINT: filter(Sex=='BOTHSEX')
 
-
-# YOUR TURN: How about over the entire time period?
+# How about over the entire time period?
 
 data %>%
     select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
@@ -628,7 +658,7 @@ data %>%
 
 ```
 
-## YOUR TURN: Asking Specific Questions of the Data
+## YOUR TURN: More Specific Questions of the Data
 
 ```{r,include=FALSE}
 
@@ -644,9 +674,14 @@ data %>%
     summarize(
         mean_value = mean(Value)
     ) %>%
-    arrange(mean_value) %>%
-    filter(TimePeriod==2017) %>%
-    filter(Sex=='FEMALE')
+    # your code here
+    
+
+
+
+# HINT: arrange(mean_value) %>%
+# HINT: filter(TimePeriod==2017) %>%
+# HINT: filter(Sex=='FEMALE')
 
 # How about women acquiring ICT Skills over the entire time period (2014 - 2019)? Which countries did the WORST?
 
@@ -719,6 +754,7 @@ data %>%
     ) %>%
     arrange(desc(mean_value))
 
+
 # Which countries had the most "TimePeriod"(s) recorded? (As in tally)
 
 data %>%
@@ -737,7 +773,7 @@ data %>%
 ```{r,include=FALSE}
 
 
-# Which countries, across time, did the best (% of population) for PCPR specifically? (programming)
+# Which countries, across time, did the BEST (% of population) for PCPR specifically? (programming)
 
 data %>%
     select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
@@ -746,14 +782,18 @@ data %>%
         Value = as.numeric(Value)
     ) %>%
     group_by(GeoAreaName) %>%
-    filter(type_of_skill=='PCPR') %>%
+    # your code here
     arrange(desc(Value)) %>%
     summarize(
         mean_value = mean(Value)
     ) %>%
     arrange(desc(mean_value))
 
-# Which countries did the worst?
+
+# HINT: filter(type_of_skill=='PCPR') %>%
+
+
+# Which countries did the WORST?
 
 data %>%
     select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
@@ -767,9 +807,15 @@ data %>%
     summarize(
         mean_value = mean(Value)
     ) %>%
-    arrange(mean_value)
+    # your code here
+
+
+# HINT: arrange(mean_value)
 
 ```
 
 ## TIDY DATA PRINCIPLE: Spread & Pivot_Wider
 
+```{r,include=FALSE}
+
+```
