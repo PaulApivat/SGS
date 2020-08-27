@@ -102,17 +102,13 @@ data_clmv
 
 ## Data Wrangling: Mutate
 
-We were not able to see `Value` - why? What can we do? Oftentime, we'll need to change the **data type** of a variable, similar to how we change **vectors** to **tibble / data frame**, BEFORE we could do any visualization operations.  
-
-We'll note that even though we're in the exploration / wrangling phase, we'll use visualization to help us make sense of the data. 
-
-Note the distinction between visualizing *for yourself* vs visualization *for others*. 
+We were not able to see `Value` - why? What can we do? Oftentime, we'll need to change the **data type** of a variable.
 
 
 ```{r, include=FALSE}
 
 # Mutate allows us to change the variable type within a piping operation
-# highlight before mutate to see Value data type before, then after
+# Note the data-type for 'Value' before and after running the mutate function
 data %>%
     select(GeoAreaName, Value, Units, Sex, `Type of skill`, TimePeriod) %>%
     mutate(
@@ -120,33 +116,6 @@ data %>%
     )
 
 
-
-```
-
-## YOUR TURN: Using mutate() function to change data-type for Outlier detection
-
-```{r,include=FALSE}
-
-# Use the mutate() function to change the variable type - from chr to numeric within a piping operation in data_clmv
-# Highlight what happens BEFORE and AFTER using the mutate() function
-data_clmv %>%
-    select(GeoAreaName, Value, Units, Sex, `Type of skill`, TimePeriod) %>%
-    mutate(
-        # your code here
-    ) 
-
-# hint: Value = as.numeric(Value)
-
-
-
-# Now that you've transfered Value from chr to 'num' (numeric), re-run the summary function
-data_clmv %>%
-    select(GeoAreaName, Value, Units, Sex, `Type of skill`, TimePeriod) %>%
-    mutate(
-        Value = as.numeric(Value)
-    ) %>%
-    summary()
-    
 
 ```
 
@@ -159,21 +128,18 @@ We can begin asking specific questions of our data. What if we wanted to find pr
 
 We'll quickly find that we need more specific questions with `filter()`
 
-# NOTE: Get re-acquainted with meta-data. 
-
 
 ```{r,include=FALSE}
 
-# We need more specific questions. We can do this by using filter()
-
-# What if we wanted proportion of Gender & ICT Skills for Thailand in 2018?
+# Use filter to sub-set your data and answer specific questions?
+# What is the proportion of Gender & ICT Skills for Thailand in 2018?
 
 data %>%
     # select specific columns (de-select others)
     select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
     # rename column
     rename(type_of_skill = `Type of skill`) %>%
-    # mutate creates new column
+    # mutate
     mutate(
         Value = as.double(Value)
     ) %>%
@@ -183,10 +149,7 @@ data %>%
     arrange(desc(Value))
 
 
-# NOTE: Here we see that for Thailand in 2018, in terms of ICT SKills and Gender, the highest proportion were Women and the COPA skill. Followed closely by WOmen and CMFL skill. 
-
 # Filter for MULTIPLE VALUES (e.g., Thailand and Cambodia)
-
 data %>%
     filter(GeoAreaName %in% c('Thailand', 'Cambodia')) %>% view()
 
@@ -197,26 +160,28 @@ data %>%
 
 data %>%
     filter(!Sex=='BOTHSEX')
+
+
+# NOTE: See Indicator 4.4.1 data dictionary to understand ICT Sub-skills. 
 ```
 
-## YOUR TURN: Subsetting through filter()
+## YOUR TURN: Watch short video clip on ICT sub-skills within Indicator 4.4.1
+
+Then use filter to find the proportion of Gender & ICT Skills for Cambodia in 2017.
 
 ```{r,include=FALSE}
 
 # Find proportion of Gender & ICT SKills for Cambodia in 2017.
+
 data_clmv %>%
     select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
     rename(type_of_skill = `Type of skill`) %>%
     mutate(
         Value = as.double(Value)
     ) %>%
-    # your code here
+    # UNCOMMENT: filter(GeoAreaName == 'Cambodia') %>% 
+    # UNCOMMENT: filter(TimePeriod == 2017) %>% 
     arrange(desc(Value))
-
-
-
-# HINT: filter(GeoAreaName == 'Cambodia') %>% 
-# HINT: filter(TimePeriod == 2017) %>% 
 
 # What gender and type_of_skill had the highest percentage in 2017?
 
@@ -227,36 +192,31 @@ data_clmv %>%
 
 Previously, by filtering for GeoAreaName ("Thailand") and TimePeriod ("2018"), we saw detailed ranking of proportion of population with sub-types of ICT Skill and gender. Perhaps we want to step back and look at data in the **aggregate**.
 
-What if we wanted to aggregate across Gender (Male, Female, Bothsex), we want to look at the aggregate proportion who have ICT Skills, for Thailand in 2018?
-
-# NOTE: Get re-acquainted with meta-data. 
 
 ```{r,include=FALSE}
 
 # What if we aggregate across Gender (Male, Female, Bothsex), we want to look at the aggregate proportion by ICT Skills, for Thailand in 2018?
 
-
 data %>%
-    # select specific columns (de-select others)
     select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
-    # rename column
     rename(type_of_skill = `Type of skill`) %>%
-    # mutate creates new column
     mutate(
         Value = as.double(Value)
     ) %>%
-     # filter on condition within parentheses
+    # filter on condition within parentheses
+    # allowing to answer specific questions
     filter(GeoAreaName == 'Thailand') %>% 
     filter(TimePeriod == 2018) %>% 
-    # group_by
+    # group operations: look at mean_value of type_of_skill, across things **not** in the group_by()
+    # - aggregate across Sex (try adding it)
     group_by(type_of_skill) %>%
-    # When aggregating across Gender within a Year, we can use the mean_value (OR sum, if we want)
+    # When aggregating across Gender within a Year, we can use the mean_value (OR median_value)
     summarize(
         mean_value = mean(Value),
         median_value = median(Value)
     ) %>%
     ungroup() %>%
-    # arrange
+    # arrange mean_value in descending order
     arrange(desc(mean_value))
 
 # NOTE: we see that more of the population does COPA, followed by CMFL, PCPR trailing. 
@@ -278,15 +238,13 @@ data_clmv %>%
     ) %>%
     filter(GeoAreaName == 'Cambodia') %>% 
     filter(TimePeriod == 2017) %>% 
-
-    # your code here
-    
+    #group_by(type_of_skill) %>%
+    #summarize(mean_value = mean(Value)) %>%
+    #ungroup() %>%
     arrange(desc(mean_value))
 
 
-# HINT: group_by(type_of_skill) %>%
-# HINT: summarize(mean_value = mean(Value)) %>%
-# HINT: ungroup() %>%
+
 
 ## Run the following code to look at Documentation
 
@@ -294,23 +252,48 @@ data_clmv %>%
 ?summarize
 ?summarise
 
-## Use all the useful functions in summarize()
+```
 
-data_clmv %>%
+## Data Wrangling: Does Order matter?
+
+```{r,include=FALSE}
+
+data %>%
     select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
     rename(type_of_skill = `Type of skill`) %>%
     mutate(
         Value = as.double(Value)
     ) %>%
-    filter(GeoAreaName == 'Cambodia') %>% 
-    filter(TimePeriod == 2017) %>% 
-    # group_by
+    filter(GeoAreaName == 'Thailand') %>% 
+    filter(TimePeriod == 2018) %>% 
     group_by(type_of_skill) %>%
-    ## Your code here
-    
-    ungroup() 
-    # arrange
-    
+    summarize(
+        mean_value = mean(Value),
+        median_value = median(Value)
+    ) %>%
+    ungroup() %>%
+    arrange(desc(mean_value))
+
+
+# switch up order
+data %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>%
+    mutate(
+        Value = as.double(Value)
+    ) %>%
+    # filter was previously here
+    group_by(type_of_skill) %>%
+    summarize(
+        mean_value = mean(Value),
+        median_value = median(Value)
+    ) %>%
+    ungroup() %>%
+    # moving filter down below group_by & summarize() does not work
+    filter(GeoAreaName == 'Thailand') %>% 
+    filter(TimePeriod == 2018) %>% 
+    arrange(desc(mean_value))
+
 
 ```
 
