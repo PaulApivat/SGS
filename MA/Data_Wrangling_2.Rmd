@@ -815,4 +815,30 @@ data %>%
 
 ```{r,include=FALSE}
 
+# SPREAD
+# NOTE: not sure if this is the best place to introduce spread
+data %>%
+    filter(GeoAreaName=="Morocco" | GeoAreaName=="Qatar") %>% 
+    select(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
+    group_by(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
+    # Error: Each row of output must be identified by a unique combination of keys.
+    # rowid_to_column() address this error
+    tibble::rowid_to_column() %>%
+    spread(key = `Type of skill`, value = Value) %>% view()
+
+# PIVOT_WIDER - even better than Spread
+# Examine by Sub-ICT-Skill
+data %>%
+    filter(GeoAreaName=="Morocco" | GeoAreaName=="Qatar") %>% 
+    select(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
+    group_by(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
+    pivot_wider(names_from = `Type of skill`, values_from = Value) %>% view()
+
+# Examine by Time
+data %>%
+    select(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
+    mutate(Value = as.numeric(Value)) %>%
+    group_by(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
+    pivot_wider(names_from = TimePeriod, values_from = Value) %>% view()
+
 ```
