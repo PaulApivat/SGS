@@ -91,19 +91,11 @@ data %>%
 
 ```
 
-## YOUR TURN: use select() and summary() to get the distribution of numerical data
+## YOUR TURN: Repeat the above with data_clmv
 
 ```{r,include=FALSE}
 
-# What TYPE of variables have we selected? 
-# NOTE: the Value column, why do we need to change the data-type? 
-
-data %>%
-    select(GeoAreaName, Value, Units, Sex, `Type of skill`, TimePeriod, Time_Detail) %>%
-    # also try summary()
-    str()
-
-# Use the everything() function within select() to help you re-organized the columns
+data_clmv 
 
 ```
 
