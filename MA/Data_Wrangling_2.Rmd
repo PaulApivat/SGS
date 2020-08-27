@@ -274,8 +274,47 @@ data %>%
     ungroup() %>%
     arrange(desc(mean_value))
 
+# switch up order 1
 
-# switch up order
+data %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    # putting filter before rename, mutate is fine
+    filter(GeoAreaName == 'Thailand') %>% 
+    filter(TimePeriod == 2018) %>% 
+    rename(type_of_skill = `Type of skill`) %>%
+    mutate(
+        Value = as.double(Value)
+    ) %>%
+    group_by(type_of_skill) %>%
+    summarize(
+        mean_value = mean(Value),
+        median_value = median(Value)
+    ) %>%
+    ungroup() %>%
+    arrange(desc(mean_value))
+
+
+# switch up order 2
+
+data %>%
+    filter(GeoAreaName == 'Thailand') %>% 
+    filter(TimePeriod == 2018) %>% 
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>%
+    mutate(
+        Value = as.double(Value)
+    ) %>%
+    group_by(type_of_skill) %>%
+    summarize(
+        mean_value = mean(Value),
+        median_value = median(Value)
+    ) %>%
+    ungroup() %>%
+    arrange(desc(mean_value))
+
+
+
+# switch up order 3
 data %>%
     select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
     rename(type_of_skill = `Type of skill`) %>%
