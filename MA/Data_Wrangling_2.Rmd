@@ -277,6 +277,8 @@ data %>%
 # switch up order 1
 
 data %>%
+    #filter(GeoAreaName == 'Thailand') %>% 
+    #filter(TimePeriod == 2018) %>% 
     select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
     # putting filter before rename, mutate is fine
     filter(GeoAreaName == 'Thailand') %>% 
@@ -312,11 +314,32 @@ data %>%
     ungroup() %>%
     arrange(desc(mean_value))
 
+# switch up order 3: using result of rename() or mutate() functions
+
+data %>%
+    filter(GeoAreaName == 'Thailand') %>% 
+    filter(TimePeriod == 2018) %>% 
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>%
+    mutate(
+        Value = as.double(Value)
+    ) %>%
+    #filter(Value < 10) %>%
+    group_by(type_of_skill) %>%
+    summarize(
+        mean_value = mean(Value),
+        median_value = median(Value)
+    ) %>%
+    ungroup() %>%
+    arrange(desc(mean_value)) %>%
+    # filter(Value) doesn't work down here
+    filter(Value < 10)
 
 
-# switch up order 3
+# switch up order 4
 data %>%
     select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    relocate(Sex, Value, GeoAreaName) %>%
     rename(type_of_skill = `Type of skill`) %>%
     mutate(
         Value = as.double(Value)
@@ -335,6 +358,33 @@ data %>%
 
 
 ```
+
+## Data Wrangling: What should the order of operations be?
+
+```{r,include=FALSE}
+
+# The ordering of the functions should depend on your question:
+data %>%
+    filter(GeoAreaName == 'Thailand') %>% 
+    filter(TimePeriod == 2018) %>% 
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>%
+    mutate(
+        Value = as.double(Value)
+    ) %>%
+    #filter(Value < 10) %>%
+    group_by(type_of_skill) %>%
+    summarize(
+        mean_value = mean(Value),
+        median_value = median(Value)
+    ) %>%
+    ungroup() %>%
+    arrange(desc(mean_value)) %>%
+    # filter(Value) doesn't work down here
+    filter(Value < 10)
+```
+
+## Pick up here: Questions (PPT)
 
 ## Data Wrangling: Aggregating across TimePeriod
 
