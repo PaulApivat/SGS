@@ -124,28 +124,6 @@ Note the distinction between visualizing *for yourself* vs visualization *for ot
 
 
 ```{r, include=FALSE}
-# Quick Review
-
-# Atomic Vectors
-# NOTE: Try visualizing BEFORE turning into Tibble
-inclass_sample_data <- c(3,4,7,2,8,10,7,4,5,6,12,15,11,8,5,9,13,10)
-inclass_sample_data_1 <- c(3,4,7,2,8,10,7,4,5,6,12,15,11,8,5,9,13,50000)
-
-class(inclass_sample_data)
-
-# Vectors into Tibble
-inclass_sample_data <- as.tibble(inclass_sample_data)
-inclass_sample_data_1 <- as.tibble(inclass_sample_data_1)
-
-# Intro to visualization (for detecting outliers)
-inclass_sample_data %>%
-    ggplot(aes(x = value)) +
-    geom_boxplot()
-
-# With outliers
-inclass_sample_data_1 %>%
-    ggplot(aes(x = value)) +
-    geom_boxplot()
 
 # Mutate allows us to change the variable type within a piping operation
 # highlight before mutate to see Value data type before, then after
@@ -155,28 +133,7 @@ data %>%
         Value = as.numeric(Value)
     )
 
-# Note: We took out Time_Detail, leaving only TimePeriod why? Try adding it back above to see.
 
-# Examine Outliers within Data, in the Value column
-
-data %>%
-    select(GeoAreaName, Value, Units, Sex, `Type of skill`, TimePeriod) %>%
-    mutate(
-        Value = as.numeric(Value)
-    ) %>%
-    # quick way to get distribution of numerical variables
-    summary()
-
-# visually explore outliers in Value
-# also try geom_histogram, then try with bins = 30, then try color = 'white'
-data %>%
-    select(GeoAreaName, Value, Units, Sex, `Type of skill`, TimePeriod) %>%
-    mutate(
-        Value = as.numeric(Value)
-    ) %>%
-    ggplot(aes(x = Value)) +
-    geom_boxplot()
-    #geom_histogram(bins = 30, color = 'white')
 
 ```
 
@@ -195,46 +152,15 @@ data_clmv %>%
 # hint: Value = as.numeric(Value)
 
 
+
 # Now that you've transfered Value from chr to 'num' (numeric), re-run the summary function
-
-# Your code here 
-    summary()
-
-    
-# Visually explore outliers using geom_boxplot
 data_clmv %>%
     select(GeoAreaName, Value, Units, Sex, `Type of skill`, TimePeriod) %>%
     mutate(
         Value = as.numeric(Value)
     ) %>%
-    # your code here
+    summary()
     
-    
-    
-# HINT: ggplot(aes(x = Value)) +
-# HINT: geom_boxplot()
-
-
-# Use mutate to change other data types
-data_clmv %>%
-    mutate(
-      # your code here
-    ) %>%
-    select(goal_chr, indicator_dbl, value_num, everything())
-
-
-# Hint: goal_chr = as.character(Goal),
-# Hint: indicator_dbl = as.factor(Indicator),
-# Hint: value_num = as.numeric(Value)
-
-
-# Numeric Constants
-options(digits = 5)
-indicator_x <- as.numeric(as.character("4.1"))
-
-# WARNING: 
-# Two Decimals Problematic
-indicator_y <- as.numeric(as.character("4.1.1"))
 
 ```
 
