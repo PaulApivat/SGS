@@ -34,40 +34,14 @@ data_clmv <-
 
 ```
 
-## Review
-
-We covered effficient ways to find all **missing values**. 
-
-```{r, include=FALSE}
-# What is a more efficient way to find missing value for data all at once?
-data %>%
-    summarize_all(~ sum(is.na(.))) 
-    # Output results of this operation in spreadsheet view.
-
-# What are the rows with missing data?
-
-```
 
 ## Data Wrangling: Selecting
 
-Having explored our data, we're now ready to wrangle our data. [Data wrangling](https://en.wikipedia.org/wiki/Data_wrangling), similar to wrestling, is doing various operations **to** the data to answer questions we have about the data. Also called 'data munging', it's a transformation process to set the data up for further use, like analytics reporting and dashboarding, as one example. 
+DATA WRANGLING DEFINITION: Having explored our data, we're now ready to wrangle our data. [Data wrangling](https://en.wikipedia.org/wiki/Data_wrangling), similar to wrestling, is doing various operations **to** the data to answer questions we have about the data. Also called 'data munging', it's a transformation process to set the data up for further use, like analytics reporting and dashboarding, as one example. 
 
 ```{r,include=FALSE}
 
-# We saw all the columns with missing data
-# De-select those columns with missing values, we will not use them in the subsequent analysis
-
-data %>%
-    select(-TimeCoverage, 
-           -UpperBound, 
-           -LowerBound, 
-           -BasePeriod, 
-           -GeoInfoUrl, 
-           -FootNote, 
-           -Nature) %>%
-    view()
-
-# Alternatively, Instead of de-select, select columns you're interested in
+# Select columns you're interested in
 data %>%
     select(GeoAreaName, 
            Value, 
@@ -75,13 +49,29 @@ data %>%
            Sex, 
            `Type of skill`, 
            TimePeriod, 
-           Time_Detail) %>%
-    view()
+           Time_Detail) 
 
+# Select a range of columns
 data %>%
-    select(Sex, Value, everything()) %>%
-    view()
+    select(GeoAreaName:Value)
 
+
+# De-select (or select "out") columns you don't want
+data %>%
+    select(-TimeCoverage, 
+           -UpperBound, 
+           -LowerBound, 
+           -BasePeriod, 
+           -GeoInfoUrl, 
+           -FootNote, 
+           -Nature) 
+
+# Arrange columns with select()
+data %>%
+    # use everything() function
+    select(Sex, Value, everything()) 
+
+# Different functions to use within select()
 data %>%
     select(starts_with("g"))
 
@@ -93,7 +83,11 @@ data %>%
 
 
 
-# Note: through piping (%>%) we can combine new functions (select) with previous functions we learned (str)
+# Piping into exploratory functions after selecting
+data %>%
+    select(GeoAreaName:Value) %>%
+    str()
+
 
 ```
 
