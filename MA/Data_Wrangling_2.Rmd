@@ -277,12 +277,12 @@ data %>%
 # switch up order 1
 
 data %>%
-    #filter(GeoAreaName == 'Thailand') %>% 
-    #filter(TimePeriod == 2018) %>% 
-    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
-    # putting filter before rename, mutate is fine
     filter(GeoAreaName == 'Thailand') %>% 
     filter(TimePeriod == 2018) %>% 
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    # putting filter before rename, mutate is fine
+    #filter(GeoAreaName == 'Thailand') %>% 
+    #filter(TimePeriod == 2018) %>% 
     rename(type_of_skill = `Type of skill`) %>%
     mutate(
         Value = as.double(Value)
@@ -359,45 +359,53 @@ data %>%
 
 ```
 
-## Data Wrangling: What should the order of operations be?
 
-```{r,include=FALSE}
 
-# The ordering of the functions should depend on your question:
-data %>%
-    filter(GeoAreaName == 'Thailand') %>% 
-    filter(TimePeriod == 2018) %>% 
-    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
-    rename(type_of_skill = `Type of skill`) %>%
-    mutate(
-        Value = as.double(Value)
-    ) %>%
-    #filter(Value < 10) %>%
-    group_by(type_of_skill) %>%
-    summarize(
-        mean_value = mean(Value),
-        median_value = median(Value)
-    ) %>%
-    ungroup() %>%
-    arrange(desc(mean_value)) %>%
-    # filter(Value) doesn't work down here
-    filter(Value < 10)
-```
+## Data Wrangling: Questions we can ask of the data
 
-## Pick up here: Questions (PPT)
-
-## Data Wrangling: Aggregating across TimePeriod
+We'll start with a broad perspective on the data. We can begin to see various 'specific' questions we can ask of the data.
 
 Previously, we aggregated across Gender for a specific year ("2018"). What if we wanted to aggregate across years (2014 & 2018), 
 
 ```{r,include=FALSE}
 
+# Broad Perspective
+# A histogram of all countries, across all gender and sub-ICT Skill types
 data %>%
-    # select specific columns (de-select others)
     select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
-    # rename column
     rename(type_of_skill = `Type of skill`) %>%
-    # mutate creates new column
+    mutate(
+        Value = as.double(Value)
+    ) %>%
+    ggplot(aes(x = Value)) +
+    geom_histogram(bins = 30, color = 'white')
+    
+
+# Add group_by GeoAreaName
+# Plot using GeoAreaName, ordered by mean_value
+data %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>%
+    mutate(
+        Value = as.double(Value)
+    ) %>%
+    group_by(GeoAreaName) %>%
+    summarize(
+        mean_value = mean(Value)
+    ) %>%
+    ungroup() %>%
+    ggplot(aes(x = reorder(GeoAreaName, mean_value), y = mean_value)) +
+    geom_histogram(stat = 'identity') +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    coord_flip()
+
+# NOTE: we can group_by Country, Gender, TimePeriod and/or Sub-Skill (ICT)
+
+
+# What specific ICT Skills did the population of Thailand have in 2018?
+data %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>%
     mutate(
         Value = as.double(Value)
     ) %>%
@@ -405,11 +413,11 @@ data %>%
     filter(GeoAreaName == 'Thailand') %>% 
     # We take OUT the TimePeriod filter for a specific year
     # But we'll add TimePeriod to group_by
-    group_by(type_of_skill, TimePeriod) %>%
+    group_by(type_of_skill, Sex, TimePeriod) %>%
     # group_by(type_of_skill, TimePeriod) means aggregating across Sex
     summarize(
-        sum_value = sum(Value),
-        mean_value = mean(Value)
+        sum_value = sum(Value)
+        #mean_value = mean(Value)
     ) %>%
     ungroup() %>%
     # arrange first by sum_value
@@ -424,11 +432,9 @@ data %>%
 
 ```
 
-## YOUR TURN: Aggregating Across Gender
+## YOUR TURN: What specific ICT Skills did the population of Cambodia have in 2017?
 
-Challenge: Since Cambodia's data is only available for 2017, can we aggregate across ICT Skill Types but for EACH gender? (Female, Male, Bothsex)?
 
-Here we'll see the average percentage value for each Gender (across all ICT skill types)
 
 ```{r,include=FALSE}
 
@@ -441,17 +447,15 @@ data_clmv %>%
         Value = as.double(Value)
     ) %>%
     filter(GeoAreaName=='Cambodia') %>%
-    # your code here
+    #group_by(type_of_skill, Sex, TimePeriod) %>%
     summarize(
         mean_value = mean(Value)
     ) %>%
     ungroup()
 
-
-# HINT: group_by(Sex) %>%
 ```
 
-## Even More Specific
+## More Specific Questions
 
 First we looked at Thailand in 2018, across Gender. Now, what if we wanted to focus specifically on WOMEN with various ICT skills
 
@@ -467,9 +471,7 @@ data %>%
     mutate(
         Value = as.double(Value)
     ) %>%
-     # filter on condition within parentheses
     filter(GeoAreaName == 'Thailand') %>% 
-    # filter on gender
     filter(Sex=='FEMALE') %>%
     arrange(desc(Value)) 
 
@@ -490,19 +492,17 @@ data %>%
     mutate(
         Value = as.double(Value)
     ) %>%
-    # your code here
-    # your code here
+    #filter(GeoAreaName == 'Cambodia') %>% 
+    #filter(Sex=='FEMALE') %>%
     filter(Sex=='FEMALE') %>%
     arrange(desc(Value)) 
 
 
-# HINT: filter(GeoAreaName == 'Cambodia') %>% 
-# HINT: filter(Sex=='FEMALE') %>%
 
 ```
 
 
-## Examining Data Across Countries
+## Zooming Out: Cross-Country Comparison
 
 We'll now use the functions we've learned to zoom out and examine proportion of population with various ICT Skills **across** type_of_skill, gender and time; making these comparisons between countries.
 
@@ -530,11 +530,6 @@ data %>%
 
 ```
 
-## YOUR TURN: Make a cross-country comparison for Thailand and Cambodia
-
-```{r,include=FALSE}
-
-```
 
 ## Asking Specific Questions of the Data
 
