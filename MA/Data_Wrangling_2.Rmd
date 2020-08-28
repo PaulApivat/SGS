@@ -25,7 +25,11 @@ library(readxl)
 
 # Read Data, Assign to Data Object
 # YOU WILL NEED TO CHANGE THE PATH FOR YOUR LAPTOP
-data <- read_xlsx("./data/sdg_goal_4.4.xlsx")
+
+# recommended
+data <- read_xlsx("sdg_goal_4.4.xlsx")
+
+#data <- read_xlsx("./data/sdg_goal_4.4.xlsx")
 glimpse(data)
 
 
