@@ -361,7 +361,7 @@ data %>%
 
 
 
-## Data Wrangling: Questions we can ask of the data
+## Data Wrangling: Questions we can ask from the data
 
 We'll start with a broad perspective on the data. We can begin to see various 'specific' questions we can ask of the data.
 
@@ -457,7 +457,9 @@ data_clmv %>%
 
 ## More Specific Questions
 
-First we looked at Thailand in 2018, across Gender. Now, what if we wanted to focus specifically on WOMEN with various ICT skills
+First we looked at Thailand in 2018, across Gender. 
+
+Follow up question, what are the proportion of women in Thailand with ICT skills?
 
 
 ```{r,include=FALSE}
@@ -531,7 +533,7 @@ data %>%
 ```
 
 
-## Asking Specific Questions of the Data
+## Specific cross-country questions:
 
 The most important thing we can do as an analyst is to be able to pose questions of our data. Here are some specific questions we could ask:
 
@@ -569,7 +571,7 @@ data %>%
     arrange(desc(mean_value)) %>%
     filter(Sex=='FEMALE')
 
-# YOUR TURN: Which countries did the best for men acquiring ICT Skills in 2016?
+# Which countries did the best for men acquiring ICT Skills in 2016?
 
 data %>%
     select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
@@ -582,12 +584,9 @@ data %>%
         mean_value = mean(Value)
     ) %>%
     arrange(desc(mean_value)) %>%
-    # your code here
+    filter(TimePeriod==2016) %>%
+    filter(Sex=='MALE')
     
-    
-    
-# HINT: filter(TimePeriod==2016) %>%
-# HINT: filter(Sex=='MALE')
 
 # How about over the entire time period?
 
@@ -604,6 +603,14 @@ data %>%
     arrange(desc(mean_value)) %>%
     filter(Sex=='MALE')
 
+
+
+```
+
+## YOUR TURN: More Specific Questions of the Data
+
+```{r,include=FALSE}
+
 # YOUR TURN: Which countries did the best for both sex in acquiring ICT Skills in 2015?
 
 data %>%
@@ -617,13 +624,10 @@ data %>%
         mean_value = mean(Value)
     ) %>%
     arrange(desc(mean_value)) %>%
-    # your code here
-    # your code here
+    #filter(TimePeriod==2015) %>%
+    #filter(Sex=='BOTHSEX')
     
     
-# HINT: filter(TimePeriod==2015) %>%
-# HINT: filter(Sex=='BOTHSEX')
-
 # How about over the entire time period?
 
 data %>%
@@ -639,11 +643,6 @@ data %>%
     arrange(desc(mean_value)) %>%
     filter(Sex=='BOTHSEX')
 
-```
-
-## YOUR TURN: More Specific Questions of the Data
-
-```{r,include=FALSE}
 
 # Which countries did the WORST for women acquiring ICT Skills in 2017 ?
 
@@ -657,14 +656,11 @@ data %>%
     summarize(
         mean_value = mean(Value)
     ) %>%
-    # your code here
+    #arrange(mean_value) %>%
+    #filter(TimePeriod==2017) %>%
+    #filter(Sex=='FEMALE')
     
 
-
-
-# HINT: arrange(mean_value) %>%
-# HINT: filter(TimePeriod==2017) %>%
-# HINT: filter(Sex=='FEMALE')
 
 # How about women acquiring ICT Skills over the entire time period (2014 - 2019)? Which countries did the WORST?
 
@@ -695,26 +691,11 @@ data %>%
         mean_value = mean(Value)
     ) %>%
     arrange(desc(mean_value)) %>%
-    filter(TimePeriod==2016) %>%
-    filter(Sex=='MALE') %>%
+    #filter(TimePeriod==2016) %>%
+    #filter(Sex=='MALE') %>%
     arrange(mean_value)
 
 
-# How about over the entire time period (2014 - 2019)? Which countries did the WORST for men?
-
-data %>%
-    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
-    rename(type_of_skill = `Type of skill`) %>% 
-    mutate(
-        Value = as.numeric(Value)
-    ) %>%
-    group_by(GeoAreaName, Sex) %>%
-    summarize(
-        mean_value = mean(Value)
-    ) %>%
-    arrange(desc(mean_value)) %>%
-    filter(Sex=='MALE') %>%
-    arrange(mean_value)
 ```
 
 ## Asking Specific Question: Specific ICT Skills Breakdown
@@ -737,25 +718,6 @@ data %>%
     ) %>%
     arrange(desc(mean_value))
 
-
-# Which countries had the most "TimePeriod"(s) recorded? (As in tally)
-
-data %>%
-    select(GeoAreaName, TimePeriod) %>%
-    group_by(GeoAreaName, TimePeriod) %>%
-    tally(sort = TRUE) %>%
-    summarize(
-        sum_n = sum(n)
-    ) %>%
-    arrange(desc(sum_n))
-
-```
-
-## YOUR TURN: asking Specific Question: Specific ICT Skills Breakdown
-
-```{r,include=FALSE}
-
-
 # Which countries, across time, did the BEST (% of population) for PCPR specifically? (programming)
 
 data %>%
@@ -765,15 +727,12 @@ data %>%
         Value = as.numeric(Value)
     ) %>%
     group_by(GeoAreaName) %>%
-    # your code here
+    filter(type_of_skill=='PCPR') %>%
     arrange(desc(Value)) %>%
     summarize(
         mean_value = mean(Value)
     ) %>%
     arrange(desc(mean_value))
-
-
-# HINT: filter(type_of_skill=='PCPR') %>%
 
 
 # Which countries did the WORST?
@@ -790,12 +749,11 @@ data %>%
     summarize(
         mean_value = mean(Value)
     ) %>%
-    # your code here
+    #arrange(mean_value)
 
-
-# HINT: arrange(mean_value)
 
 ```
+
 
 ## What is an acceptable level for indicator 4.4.1?
 
@@ -864,25 +822,17 @@ data %>%
 ```
 
 
-## TIDY DATA PRINCIPLE: Spread & Pivot_Wider
+## TIDY DATA PRINCIPLE: Pivot_Wider
+
+What if we wanted each of the sub-skills to have their own columns, so we could compare GeoAreaName, TimePeriod and Sex for each of the sub-skills?
 
 ```{r,include=FALSE}
 
-# SPREAD
-# NOTE: not sure if this is the best place to introduce spread
-data %>%
-    filter(GeoAreaName=="Morocco" | GeoAreaName=="Qatar") %>% 
-    select(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
-    group_by(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
-    # Error: Each row of output must be identified by a unique combination of keys.
-    # rowid_to_column() address this error
-    tibble::rowid_to_column() %>%
-    spread(key = `Type of skill`, value = Value) %>% view()
 
 # PIVOT_WIDER - even better than Spread
 # Examine by Sub-ICT-Skill
 data %>%
-    filter(GeoAreaName=="Morocco" | GeoAreaName=="Qatar") %>% 
+    #filter(GeoAreaName=="Morocco" | GeoAreaName=="Qatar") %>% 
     select(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
     group_by(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
     pivot_wider(names_from = `Type of skill`, values_from = Value) %>% view()
