@@ -18,17 +18,20 @@ We covered a fair amount last time, we'll re-run some code to get setup:
 sessionInfo()
 
 # Load Libraries & Packages
+install.packages("tidyverse")
+install.packages("readxl")
 library(tidyverse)
 library(readxl)
 
 # Read Data, Assign to Data Object
+# YOU WILL NEED TO CHANGE THE PATH FOR YOUR LAPTOP
 data <- read_xlsx("./data/sdg_goal_4.4.xlsx")
 glimpse(data)
 
-# Use another function, similar to glimpse() to explore
 
-# Your Turn: Read data, assign to data_clmv
-# use read_xlsx() function
+
+
+# YOU WILL NEED TO CHANGE THE PATH FOR YOUR LAPTOP
 data_clmv <- 
 
 
@@ -69,7 +72,7 @@ data %>%
 # Arrange columns with select()
 data %>%
     # use everything() function
-    select(Sex, Value, everything()) 
+    select(TimePeriod, Sex, Value, everything()) 
 
 # Different functions to use within select()
 data %>%
@@ -86,7 +89,7 @@ data %>%
 # Piping into exploratory functions after selecting
 data %>%
     select(GeoAreaName:Value) %>%
-    str()
+    view()
 
 
 ```
@@ -116,6 +119,11 @@ data %>%
     )
 
 
+
+# TIP: Get into habit of looking up functions in the documentation
+# Run the below code:
+
+?as.numeric
 
 ```
 
@@ -151,12 +159,14 @@ data %>%
 
 # Filter for MULTIPLE VALUES (e.g., Thailand and Cambodia)
 data %>%
-    filter(GeoAreaName %in% c('Thailand', 'Cambodia')) %>% view()
+    filter(GeoAreaName %in% c('Thailand', 'Cambodia')) %>% 
+    view()
 
 # REVERSE CONDITIONAL LOGIC with filter
 
 data %>%
-    filter(!GeoAreaName %in% c('Thailand', 'Cambodia')) %>% view()
+    filter(!GeoAreaName %in% c('Thailand', 'Cambodia')) %>% 
+    view()
 
 data %>%
     filter(!Sex=='BOTHSEX')
@@ -182,6 +192,9 @@ data_clmv %>%
     # UNCOMMENT: filter(GeoAreaName == 'Cambodia') %>% 
     # UNCOMMENT: filter(TimePeriod == 2017) %>% 
     arrange(desc(Value))
+
+
+#NOTE: Uncomment means to "delete" the hashtag (#) so the line turns into executable code
 
 # What gender and type_of_skill had the highest percentage in 2017?
 
@@ -299,9 +312,9 @@ data %>%
 # switch up order 2
 
 data %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
     filter(GeoAreaName == 'Thailand') %>% 
     filter(TimePeriod == 2018) %>% 
-    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
     rename(type_of_skill = `Type of skill`) %>%
     mutate(
         Value = as.double(Value)
@@ -352,8 +365,8 @@ data %>%
     ) %>%
     ungroup() %>%
     # moving filter down below group_by & summarize() does not work
-    filter(GeoAreaName == 'Thailand') %>% 
-    filter(TimePeriod == 2018) %>% 
+    #filter(GeoAreaName == 'Thailand') %>% 
+    #filter(TimePeriod == 2018) %>% 
     arrange(desc(mean_value))
 
 
@@ -778,7 +791,10 @@ data %>%
     ) %>%
     arrange(desc(mean_value)) %>%
     view()
-    
+
+
+
+?quantile  
 
 ## Binning Method
 data %>%
@@ -790,7 +806,7 @@ data %>%
         mean_value = mean(Value)
     ) %>%
     mutate(
-        mean_value_binned = ntile(mean_value, 4)
+        mean_value_binned = ntile(mean_value, 5)
     ) %>%
     arrange(desc(mean_value)) %>%
     view()
