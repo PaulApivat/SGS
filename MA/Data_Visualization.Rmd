@@ -542,9 +542,30 @@ ggMarginal(p, type = 'histogram')
 
 ```
 
-## Excel Connection
+## TIME
 
-```
+```{r,include=FALSE}
+
+# Examine by Time
+data %>%
+    select(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
+    mutate(Value = as.numeric(Value)) %>%
+    group_by(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
+    pivot_wider(names_from = TimePeriod, values_from = Value) %>% view()
+
+# Brazil - somewhat complete data
+data %>%
+    select(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
+    mutate(Value = as.numeric(Value)) %>%
+    group_by(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
+    pivot_wider(names_from = TimePeriod, values_from = Value) %>%
+    filter(GeoAreaName=='Brazil')
+
+
+data %>%
+    select(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
+    mutate(Value = as.numeric(Value)) %>%
+    group_by(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value)
 
 ```
 
