@@ -69,7 +69,7 @@ data %>%
 # 9 distinct Type of Skill
 data %>%
     group_by(`Type of skill`) %>%
-    summarize(distinct_skill_type = n_distinct(`Type of skill`))
+    summarize(distinct_skill_type = n_distinct(`Type of skill`))9
 
 data %>%
     group_by(Sex) %>%
@@ -213,6 +213,8 @@ data %>%
 ```
 
 ## YOUR TURN: Basic Visualizations - One Categorical Variable
+
+You'll repeat the above, except you'll filter for *women in Thailand for the year 2018*
 
 ```{r,include=FALSE}
 
@@ -434,10 +436,11 @@ data %>%
 
 ```
 
-## Two or More Categorical Variables
+## One Numerical and One Categorical
 
 ```{r,include=FALSE}
 
+# Two categoric variables
 data %>%
     select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
     rename(type_of_skill = `Type of skill`) %>%
@@ -476,6 +479,21 @@ data %>%
     geom_point(size=6)
 
 
+# Several observations per Group
+
+# Observations will be Values across Gender/Time
+# Group will be by countries
+
+data %>%
+    select(GeoAreaName, Value) %>%
+    mutate(Value = as.numeric(Value)) %>%
+    group_by(GeoAreaName) %>%
+    summarize(avg_value = mean(Value)) %>%
+    ungroup() %>%
+    ggplot(aes(x = GeoAreaName, y = avg_value)) +
+    geom_boxplot(aes(color = ifelse(avg_value > 40, 'green', 'red'))) +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
 ```
 
 
@@ -488,6 +506,7 @@ data %>%
 data %>%
     select(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
     group_by(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
+    # Give each Type of skill its own column
     pivot_wider(names_from = `Type of skill`, values_from = Value) %>% view()
 
 
@@ -495,24 +514,36 @@ data %>%
 install.packages('ggExtra')
 library(ggExtra)
 
-# Basic Scatter Plot
+# RELATIONSHIPS #
+
+# Basic Scatter Plot: COPA & EMAIL
+# Basic Scatter Plot: COPA & PCPR
 data %>%
     select(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
     group_by(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
     pivot_wider(names_from = `Type of skill`, values_from = Value) %>%
     mutate(
         COPA = as.numeric(COPA),
-        EMAIL = as.numeric(EMAIL)
+        EMAIL = as.numeric(EMAIL),
+        PCPR = as.numeric(PCPR),
+        INST = as.numeric(INST)
     ) %>%
     # Group by GeoAreaName, across TimePeriod, Sex
     group_by(GeoAreaName) %>%
     summarize(
-        avg_COPA = mean(COPA, na.rm = TRUE),
-        avg_EMAIL = mean(EMAIL, na.rm = TRUE)
+        avg_COPA = mean(COPA),
+        avg_EMAIL = mean(EMAIL),
+        avg_PCPR = mean(PCPR),
+        avg_INST = mean(INST)
     ) %>%
     ungroup() %>%
-    ggplot(aes(x = avg_COPA, y = avg_EMAIL)) + 
+    ggplot(aes(x = avg_COPA, y = avg_PCPR)) + 
     geom_point()
+
+
+
+
+
 
 # Basic Scatter Plot (color cluster by Gender)
 p <- data %>%
@@ -542,30 +573,42 @@ ggMarginal(p, type = 'histogram')
 
 ```
 
-## TIME
+
+
+## Visualization: Bells & Whistles
 
 ```{r,include=FALSE}
 
-# Examine by Time
 data %>%
-    select(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
-    mutate(Value = as.numeric(Value)) %>%
-    group_by(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
-    pivot_wider(names_from = TimePeriod, values_from = Value) %>% view()
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>%
+    mutate(
+        Value = as.double(Value)
+    ) %>%
+    # group by 'type_of_skill', summarize across GeoAreaName & TimePeriod
+    group_by(GeoAreaName, type_of_skill) %>%
+    summarize(
+        mean_value = mean(Value),
+        median_value = median(Value)
+    ) %>%
+    ungroup() %>%
+    arrange(desc(mean_value)) %>%
+    # Categorical variables: GeoAreaName & type_of_skill
+    ggplot(aes(x=GeoAreaName, y=mean_value, color=type_of_skill)) +
+    geom_point()
 
-# Brazil - somewhat complete data
+
+
+# Numeric & Categoric
 data %>%
-    select(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
+    select(GeoAreaName, Value) %>%
     mutate(Value = as.numeric(Value)) %>%
-    group_by(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
-    pivot_wider(names_from = TimePeriod, values_from = Value) %>%
-    filter(GeoAreaName=='Brazil')
-
-
-data %>%
-    select(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
-    mutate(Value = as.numeric(Value)) %>%
-    group_by(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value)
+    group_by(GeoAreaName) %>%
+    summarize(avg_value = mean(Value)) %>%
+    ungroup() %>%
+    ggplot(aes(x = GeoAreaName, y = avg_value)) +
+    geom_boxplot(aes(color = ifelse(avg_value > 40, 'green', 'red'))) +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 ```
 

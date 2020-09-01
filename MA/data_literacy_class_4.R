@@ -33,7 +33,7 @@ women_business_law_index_clmv <- SDGData %>%
     filter(`Indicator Name` == 'Women Business and the Law Index Score (1-100)') %>% 
     filter(`Country Name` == 'Thailand' | `Country Name` == 'Cambodia' | `Country Name` == 'Myanmar' | `Country Name` == 'Lao PDR' | `Country Name` == 'Vietnam')
     
-women_business_law_index_clmv
+glimpse(women_business_law_index_clmv)
 
 
 
@@ -101,7 +101,7 @@ women_business_law_index_clmv %>%
     # Belatedly changing year from chr to date
     mutate(
         year = as.Date(year, format = "%Y")
-    ) %>%
+    ) %>% 
     ggplot(aes(x = year, y = score, group = country_name)) +
     geom_line(aes(color = country_name), size = 3) +
     # NOTE: geom_point IMPLICITLY groups by color, geom_line requires EXPLICIT group assignment
