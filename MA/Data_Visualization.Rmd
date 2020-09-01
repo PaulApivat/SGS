@@ -483,6 +483,63 @@ data %>%
 
 ```{r,include=FALSE}
 
+# PIVOT_WIDER - even better than Spread
+# Examine by Sub-ICT-Skill
+data %>%
+    select(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
+    group_by(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
+    pivot_wider(names_from = `Type of skill`, values_from = Value) %>% view()
+
+
+# Two Numeric Variables
+install.packages('ggExtra')
+library(ggExtra)
+
+# Basic Scatter Plot
+data %>%
+    select(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
+    group_by(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
+    pivot_wider(names_from = `Type of skill`, values_from = Value) %>%
+    mutate(
+        COPA = as.numeric(COPA),
+        EMAIL = as.numeric(EMAIL)
+    ) %>%
+    # Group by GeoAreaName, across TimePeriod, Sex
+    group_by(GeoAreaName) %>%
+    summarize(
+        avg_COPA = mean(COPA, na.rm = TRUE),
+        avg_EMAIL = mean(EMAIL, na.rm = TRUE)
+    ) %>%
+    ungroup() %>%
+    ggplot(aes(x = avg_COPA, y = avg_EMAIL)) + 
+    geom_point()
+
+# Basic Scatter Plot (color cluster by Gender)
+p <- data %>%
+    select(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
+    group_by(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
+    pivot_wider(names_from = `Type of skill`, values_from = Value) %>%
+    mutate(
+        COPA = as.numeric(COPA),
+        EMAIL = as.numeric(EMAIL),
+        PCPR = as.numeric(PCPR)
+    ) %>%
+    # Group by GeoAreaName, across TimePeriod, Sex
+    group_by(GeoAreaName, Sex) %>%
+    summarize(
+        avg_COPA = mean(COPA, na.rm = TRUE),
+        avg_EMAIL = mean(EMAIL, na.rm = TRUE),
+        avg_PCPR = mean(PCPR, na.rm = TRUE)
+    ) %>%
+    ungroup() %>%
+    ggplot(aes(x = avg_PCPR, y = avg_EMAIL, color = Sex)) + 
+    geom_point()
+
+# Scatter Plot with Marginal Distribution
+ggMarginal(p, type = 'histogram')
+
+
+
 ```
 
 ## Excel Connection
