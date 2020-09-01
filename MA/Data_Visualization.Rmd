@@ -41,7 +41,7 @@ data_clmv <- read_xlsx("./data/sdg_goal_4.4_clmv.xlsx")
 
 ## Quick Review: Data Wrangling
 
-Data wrangling is a starting point for visualization.
+A pre-requisite for data visualization is data wrangling.
 
 ```{r, include=FALSE}
 
@@ -375,7 +375,8 @@ Instead of the categories (Type of Skill or GeoAreaName or Gender), we'll visual
 
 ```{r,include=FALSE}
 
-# Histogram: Group by Type of Skill
+# Histogram: Median Value
+# (group by 'type of skill')
 data %>%
     select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
     rename(type_of_skill = `Type of skill`) %>%
@@ -393,14 +394,15 @@ data %>%
     ggplot(aes(x = median_value)) +
     geom_histogram()
 
-# Histogram: Group by Type of SKill AND GeoAreaName
+# Histogram: Mean Value
+# Group by Type of SKill AND GeoAreaName
 data %>%
     select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
     rename(type_of_skill = `Type of skill`) %>%
     mutate(
         Value = as.double(Value)
     ) %>%
-    # group by 'type_of_skill' 
+    # group by GeoAreaName and 'type_of_skill' 
     group_by(GeoAreaName, type_of_skill) %>%
     summarize(
         mean_value = mean(Value),
@@ -411,12 +413,75 @@ data %>%
     ggplot(aes(x = median_value)) +
     geom_histogram()
 
+# Density Plot of Mean Value
+# group by GeoAreaName and type of skill
+data %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>%
+    mutate(
+        Value = as.double(Value)
+    ) %>%
+    # group by GeoAreaName and 'type_of_skill' 
+    group_by(GeoAreaName, type_of_skill) %>%
+    summarize(
+        mean_value = mean(Value),
+        median_value = median(Value)
+    ) %>%
+    ungroup() %>%
+    arrange(desc(mean_value)) %>%
+    ggplot(aes(x = mean_value)) +
+    geom_density(fill="#69b3a2", color="#e9ecef", alpha=0.8)
 
 ```
+
+## Two or More Categorical Variables
+
+```{r,include=FALSE}
+
+data %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>%
+    mutate(
+        Value = as.double(Value)
+    ) %>%
+    # group by 'type_of_skill', summarize across GeoAreaName & TimePeriod
+    group_by(GeoAreaName, type_of_skill) %>%
+    summarize(
+        mean_value = mean(Value),
+        median_value = median(Value)
+    ) %>%
+    ungroup() %>%
+    arrange(desc(mean_value)) %>%
+    # Categorical variables: GeoAreaName & type_of_skill
+    ggplot(aes(x=GeoAreaName, y=mean_value, color=type_of_skill)) +
+    geom_point()
+
+
+data %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>%
+    mutate(
+        Value = as.double(Value)
+    ) %>%
+    # group by 'type_of_skill', summarize across GeoAreaName & TimePeriod
+    group_by(Sex, type_of_skill) %>%
+    summarize(
+        mean_value = mean(Value),
+        median_value = median(Value)
+    ) %>%
+    ungroup() %>%
+    arrange(desc(mean_value)) %>%
+    # Categorical variables: Sex & type_of_skill
+    ggplot(aes(x=Sex, y=mean_value, color=type_of_skill)) +
+    geom_point(size=6)
+
+
+```
+
 
 ## Pivot Wider & Pivot Longer 
 
-```
+```{r,include=FALSE}
 
 ```
 
