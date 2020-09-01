@@ -129,9 +129,11 @@ data %>%
     arrange(desc(mean_value))
 ```
 
-## Basic Visualizations: Bar Chart
+## Basic Visualizations: Categorical Variables
 
 ```{r, include=FALSE}
+
+# Bar Chart
 data %>%
     select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
     rename(type_of_skill = `Type of skill`) %>%
@@ -145,12 +147,172 @@ data %>%
         median_value = median(Value)
     ) %>%
     ungroup() %>%
-    arrange(desc(mean_value))
+    arrange(desc(mean_value)) %>%
+    
+    # add Bar Chart
+    ggplot(aes(x = type_of_skill, y = mean_value)) +
+    geom_col()
 
+# Pie Chart
+data %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>%
+    mutate(
+        Value = as.double(Value)
+    ) %>%
+    # group by 'type_of_skill', summarize across GeoAreaName & TimePeriod
+    group_by(type_of_skill) %>%
+    summarize(
+        mean_value = mean(Value),
+        median_value = median(Value)
+    ) %>%
+    ungroup() %>%
+    arrange(desc(mean_value)) %>%
+    ggplot(aes(x = "", y = mean_value, fill = type_of_skill)) +
+    geom_bar(stat = 'identity', width = 1) +
+    coord_polar("y", start = 0)
+
+# Points 
+data %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>%
+    mutate(
+        Value = as.double(Value)
+    ) %>%
+    # group by 'type_of_skill', summarize across GeoAreaName & TimePeriod
+    group_by(type_of_skill) %>%
+    summarize(
+        mean_value = mean(Value),
+        median_value = median(Value)
+    ) %>%
+    ungroup() %>%
+    arrange(desc(mean_value)) %>%
+    ggplot(aes(x = type_of_skill, y = mean_value)) +
+    geom_point(aes(color = type_of_skill), size = 8, alpha = 0.5)
+
+# Lollipop plot = point + segment
+data %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>%
+    mutate(
+        Value = as.double(Value)
+    ) %>%
+    # group by 'type_of_skill', summarize across GeoAreaName & TimePeriod
+    group_by(type_of_skill) %>%
+    summarize(
+        mean_value = mean(Value),
+        median_value = median(Value)
+    ) %>%
+    ungroup() %>%
+    arrange(desc(mean_value)) %>%
+    ggplot(aes(x = type_of_skill, y = mean_value)) +
+    geom_point(aes(color = type_of_skill), size = 8, alpha = 0.5) +
+    # add segment
+    geom_segment(aes(x=type_of_skill, xend=type_of_skill, y=0, yend=mean_value))
 
 ```
 
+## YOUR TURN: Basic Visualizations - Categorical Variables
 
+```{r,include=FALSE}
+
+# Try on your own before looking at the hints
+# Bar chart
+# Pie chart
+# Points 
+# Lollipops
+
+
+
+
+
+### Answer Below ###
+
+# Bar chart
+data %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>%
+    mutate(
+        Value = as.double(Value)
+    ) %>%
+    filter(GeoAreaName == 'Thailand') %>% 
+    filter(TimePeriod == 2018) %>% 
+    filter(Sex=='FEMALE') %>%
+    group_by(type_of_skill) %>%
+    summarize(
+        mean_value = mean(Value),
+        median_value = median(Value)
+    ) %>%
+    ungroup() %>%
+    arrange(desc(mean_value)) %>%
+    # add Bar Chart
+    #ggplot(aes(x = type_of_skill, y = mean_value)) +
+    #geom_col()
+
+# Pie Chart
+data %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>%
+    mutate(
+        Value = as.double(Value)
+    ) %>%
+    filter(GeoAreaName == 'Thailand') %>% 
+    filter(TimePeriod == 2018) %>% 
+    filter(Sex=='FEMALE') %>%
+    group_by(type_of_skill) %>%
+    summarize(
+        mean_value = mean(Value),
+        median_value = median(Value)
+    ) %>%
+    ungroup() %>%
+    arrange(desc(mean_value)) %>%
+    #ggplot(aes(x = "", y = mean_value, fill = type_of_skill)) +
+    #geom_bar(stat = 'identity', width = 1) +
+    #coord_polar("y", start = 0)
+
+# Point
+data %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>%
+    mutate(
+        Value = as.double(Value)
+    ) %>%
+    filter(GeoAreaName == 'Thailand') %>% 
+    filter(TimePeriod == 2018) %>% 
+    filter(Sex=='FEMALE') %>%
+    group_by(type_of_skill) %>%
+    summarize(
+        mean_value = mean(Value),
+        median_value = median(Value)
+    ) %>%
+    ungroup() %>%
+    arrange(desc(mean_value)) %>%
+    #ggplot(aes(x = type_of_skill, y = mean_value)) +
+    #geom_point(aes(color = type_of_skill), size = 8, alpha = 0.5)
+
+# Lollipop
+data %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>%
+    mutate(
+        Value = as.double(Value)
+    ) %>%
+    filter(GeoAreaName == 'Thailand') %>% 
+    filter(TimePeriod == 2018) %>% 
+    filter(Sex=='FEMALE') %>%
+    group_by(type_of_skill) %>%
+    summarize(
+        mean_value = mean(Value),
+        median_value = median(Value)
+    ) %>%
+    ungroup() %>%
+    arrange(desc(mean_value)) %>%
+    #ggplot(aes(x = type_of_skill, y = mean_value)) +
+    #geom_point(aes(color = type_of_skill), size = 8, alpha = 0.5) +
+    # add segment
+    #geom_segment(aes(x=type_of_skill, xend=type_of_skill, y=0, yend=mean_value))
+
+```
 
 
 ## Pivot Wider & Pivot Longer 
