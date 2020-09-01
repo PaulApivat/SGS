@@ -1,0 +1,168 @@
+---
+title: "Data_Visualization.Rmd"
+author: "Paul Apivat Hanvongse"
+date: "9/1/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Setup
+
+You know the drill.
+
+```{r, include=FALSE}
+# Take note of our software environment
+sessionInfo()
+
+# Load Libraries & Packages
+install.packages("tidyverse")
+install.packages("readxl")
+library(tidyverse)
+library(readxl)
+
+# Read Data, Assign to Data Object
+# YOU WILL NEED TO CHANGE THE PATH FOR YOUR LAPTOP
+
+# recommended
+data <- read_xlsx("./data/sdg_goal_4.4.xlsx")
+
+#data <- read_xlsx("./data/sdg_goal_4.4.xlsx")
+glimpse(data)
+
+
+# YOU WILL NEED TO CHANGE THE PATH FOR YOUR LAPTOP
+data_clmv <- read_xlsx("./data/sdg_goal_4.4_clmv.xlsx")
+
+
+```
+
+## Quick Review: Data Wrangling
+
+Data wrangling is a starting point for visualization.
+
+```{r, include=FALSE}
+
+# Group by Type of Skill, across GeoAreaName & TimePeriod
+data %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>%
+    mutate(
+        Value = as.double(Value)
+    ) %>%
+    # group by 'type_of_skill', summarize across GeoAreaName & TimePeriod
+    group_by(type_of_skill) %>%
+    summarize(
+        mean_value = mean(Value),
+        median_value = median(Value)
+    ) %>%
+    ungroup() %>%
+    arrange(desc(mean_value))
+
+# 88 distinct GeoAreaName
+data %>%
+    group_by(GeoAreaName) %>%
+    summarize(distinct_countries = n_distinct(GeoAreaName))
+
+# 9 distinct Type of Skill
+data %>%
+    group_by(`Type of skill`) %>%
+    summarize(distinct_skill_type = n_distinct(`Type of skill`))
+
+data %>%
+    group_by(Sex) %>%
+    summarize(distinct_gender = n_distinct(Sex))
+
+# Group by GeoAreaName & Type of Skill 
+# Assuming there is Data Availability on 9 distinct skills for all 88 countries
+# we should see ~792 observations
+data %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>%
+    mutate(
+        Value = as.double(Value)
+    ) %>%
+    group_by(GeoAreaName, type_of_skill) %>%
+    summarize(
+        mean_value = mean(Value),
+        median_value = median(Value)
+    ) %>%
+    ungroup() %>%
+    arrange(desc(mean_value))
+
+# Group by Sex & Type of Skill
+# Should see 27 rows (3 * 9)
+data %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>%
+    mutate(
+        Value = as.double(Value)
+    ) %>%
+    group_by(Sex, type_of_skill) %>%
+    summarize(
+        mean_value = mean(Value),
+        median_value = median(Value)
+    ) %>%
+    ungroup() %>%
+    arrange(desc(mean_value))
+
+
+# Add filters for GeoAreaName, Sex, TimePeriod
+
+data %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>%
+    mutate(
+        Value = as.double(Value)
+    ) %>%
+    filter(GeoAreaName == 'Thailand') %>% 
+    filter(TimePeriod == 2018) %>% 
+    filter(Sex=='FEMALE') %>%
+    group_by(type_of_skill) %>%
+    summarize(
+        mean_value = mean(Value),
+        median_value = median(Value)
+    ) %>%
+    ungroup() %>%
+    arrange(desc(mean_value))
+```
+
+## Basic Visualizations: Bar Chart
+
+```{r, include=FALSE}
+data %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>%
+    mutate(
+        Value = as.double(Value)
+    ) %>%
+    # group by 'type_of_skill', summarize across GeoAreaName & TimePeriod
+    group_by(type_of_skill) %>%
+    summarize(
+        mean_value = mean(Value),
+        median_value = median(Value)
+    ) %>%
+    ungroup() %>%
+    arrange(desc(mean_value))
+
+
+```
+
+
+
+
+## Pivot Wider & Pivot Longer 
+
+```
+
+```
+
+## Excel Connection
+
+```
+
+```
+
+
