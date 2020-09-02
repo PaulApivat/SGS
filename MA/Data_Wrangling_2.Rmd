@@ -786,6 +786,7 @@ data %>%
     summarize(
         mean_value = mean(Value)
     ) %>%
+    ungroup() %>%
     mutate(
         min_mean = min(mean_value),
         iqr_25_percentile = quantile(mean_value, probs = c(0.25)),
@@ -809,6 +810,7 @@ data %>%
     summarize(
         mean_value = mean(Value)
     ) %>%
+    ungroup() %>%
     mutate(
         mean_value_binned = ntile(mean_value, 5)
     ) %>%
@@ -854,14 +856,15 @@ What if we wanted each of the sub-skills to have their own columns, so we could 
 data %>%
     #filter(GeoAreaName=="Morocco" | GeoAreaName=="Qatar") %>% 
     select(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
-    group_by(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
+    #group_by(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
+    #ungroup() %>%
     pivot_wider(names_from = `Type of skill`, values_from = Value) %>% view()
 
 # Examine by Time
 data %>%
     select(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
     mutate(Value = as.numeric(Value)) %>%
-    group_by(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
+    #group_by(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
     pivot_wider(names_from = TimePeriod, values_from = Value) %>% view()
 
 ```
