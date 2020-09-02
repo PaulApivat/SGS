@@ -20,6 +20,8 @@ sessionInfo()
 # Load Libraries & Packages
 install.packages("tidyverse")
 install.packages("readxl")
+install.packages('ggExtra')
+library(ggExtra)
 library(tidyverse)
 library(readxl)
 
@@ -579,6 +581,7 @@ ggMarginal(p, type = 'histogram')
 
 ```{r,include=FALSE}
 
+# Point plot of Average Percentages by country
 data %>%
     select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
     rename(type_of_skill = `Type of skill`) %>%
@@ -594,8 +597,19 @@ data %>%
     ungroup() %>%
     arrange(desc(mean_value)) %>%
     # Categorical variables: GeoAreaName & type_of_skill
+    # ggplot(aes(x=GeoAreaName, y=mean_value, color=ifelse(type_of_skill=='CMFL', 'red', 'black'))) +
     ggplot(aes(x=GeoAreaName, y=mean_value, color=type_of_skill)) +
-    geom_point()
+    geom_point() +
+    # Customization
+    theme(axis.text.x = element_text(angle = 80, hjust = 1)) +
+    labs(
+        title = "Average Proportion of Youth & Adult with specific ICT Skills by Country",
+        subtitle = "2014 - 2019",
+        x = "Country",
+        y = "Average Percentage (%)",
+        color = 'Specific ICT Skills',
+        caption = 'Data Literacy & Exploratory Data Analysis course'
+    )
 
 
 
@@ -604,11 +618,23 @@ data %>%
     select(GeoAreaName, Value) %>%
     mutate(Value = as.numeric(Value)) %>%
     group_by(GeoAreaName) %>%
-    summarize(avg_value = mean(Value)) %>%
+    summarize(mean_value = mean(Value)) %>%
     ungroup() %>%
-    ggplot(aes(x = GeoAreaName, y = avg_value)) +
-    geom_boxplot(aes(color = ifelse(avg_value > 40, 'green', 'red'))) +
-    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    ggplot(aes(x = reorder(GeoAreaName, mean_value), y = mean_value)) +
+    geom_boxplot(aes(color = ifelse(mean_value > 40, 'green', 'red'))) +
+    geom_hline(yintercept = 40, color = 'orange') +
+    theme_classic() +
+    theme(
+        axis.text.x = element_text(angle = 80, hjust = 1),
+        legend.position = "none"
+        ) +
+    labs(
+        title = "Countries ordered by Average Percentage of Population with ICT Skills",
+        subtitle = "Above and Below 40%",
+        x = "Country",
+        y = "Average Percentage (%)",
+        caption = "Author: Name"
+    )
 
 ```
 
