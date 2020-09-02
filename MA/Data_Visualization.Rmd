@@ -71,7 +71,7 @@ data %>%
 # 9 distinct Type of Skill
 data %>%
     group_by(`Type of skill`) %>%
-    summarize(distinct_skill_type = n_distinct(`Type of skill`))9
+    summarize(distinct_skill_type = n_distinct(`Type of skill`))
 
 data %>%
     group_by(Sex) %>%
@@ -334,11 +334,13 @@ data %>%
     # add segment
     #geom_segment(aes(x=type_of_skill, xend=type_of_skill, y=0, yend=mean_value))
 
+?geom_segment    
+    
 ```
 
 ## Extra Challenge: Additional Categorical Variables
 
-Instead of Type of Skill, try visualizing when group_by(GeoAreaName)
+Instead of Type of Skill, try visualizing when group_by(GeoAreaName) with a Bar chart
 
 ```{r,include=FALSE}
 
@@ -478,7 +480,7 @@ data %>%
     arrange(desc(mean_value)) %>%
     # Categorical variables: Sex & type_of_skill
     ggplot(aes(x=Sex, y=mean_value, color=type_of_skill)) +
-    geom_point(size=6)
+    geom_point(size=6, alpha = 0.5)
 
 
 # Several observations per Group
@@ -539,8 +541,8 @@ data %>%
         avg_INST = mean(INST)
     ) %>%
     ungroup() %>%
-    ggplot(aes(x = avg_COPA, y = avg_PCPR)) + 
-    geom_point()
+    ggplot(aes(x = avg_COPA, y = avg_EMAIL)) + 
+    geom_point() 
 
 
 
@@ -580,6 +582,33 @@ ggMarginal(p, type = 'histogram')
 ## Visualization: Bells & Whistles
 
 ```{r,include=FALSE}
+
+# Scatterplot: Email & COPA
+# FACETED BY COUNTRY
+data %>%
+    select(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
+    group_by(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
+    pivot_wider(names_from = `Type of skill`, values_from = Value) %>%
+    mutate(
+        COPA = as.numeric(COPA),
+        EMAIL = as.numeric(EMAIL),
+        PCPR = as.numeric(PCPR),
+        INST = as.numeric(INST)
+    ) %>%
+    # Group by GeoAreaName, across TimePeriod, Sex
+    group_by(GeoAreaName) %>%
+    summarize(
+        avg_COPA = mean(COPA),
+        avg_EMAIL = mean(EMAIL),
+        avg_PCPR = mean(PCPR),
+        avg_INST = mean(INST)
+    ) %>%
+    ungroup() %>%
+    ggplot(aes(x = avg_COPA, y = avg_EMAIL)) + 
+    geom_point() +
+    facet_wrap(~ GeoAreaName)
+
+
 
 # Point plot of Average Percentages by country
 data %>%
