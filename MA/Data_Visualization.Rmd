@@ -197,6 +197,25 @@ data %>%
     ggplot(aes(x = type_of_skill, y = mean_value)) +
     geom_point(aes(color = type_of_skill), size = 8, alpha = 0.5)
 
+# ALTERNATIVE: Points 
+data %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>%
+    mutate(
+        Value = as.double(Value)
+    ) %>%
+    # group by 'type_of_skill', summarize across GeoAreaName & TimePeriod
+    group_by(type_of_skill) %>%
+    summarize(
+        mean_value = mean(Value),
+        median_value = median(Value)
+    ) %>%
+    ungroup() %>%
+    arrange(desc(mean_value)) %>%
+    ggplot(aes(x = type_of_skill, y = mean_value)) +
+    geom_point(aes(color = type_of_skill, size = mean_value), alpha = 0.8)
+
+
 # Lollipop plot = point + segment
 data %>%
     select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
@@ -487,8 +506,10 @@ data %>%
     ungroup() %>%
     arrange(desc(mean_value)) %>%
     ggplot(aes(x = mean_value)) +
-    geom_density(fill="#69b3a2", color="#e9ecef", alpha=0.8)
+    geom_density(fill="#69b3a2", color="#1f7ede", alpha=0.8)
 
+?geom_histogram
+?geom_density
 ```
 
 ## One Numerical and One Categorical
@@ -560,7 +581,7 @@ data %>%
 # Examine by Sub-ICT-Skill
 data %>%
     select(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
-    group_by(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>% view()
+    group_by(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>% 
     # Give each Type of skill its own column
     pivot_wider(names_from = `Type of skill`, values_from = Value) %>% view()
 
