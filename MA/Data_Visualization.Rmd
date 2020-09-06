@@ -560,7 +560,7 @@ data %>%
 # Examine by Sub-ICT-Skill
 data %>%
     select(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
-    group_by(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
+    group_by(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>% view()
     # Give each Type of skill its own column
     pivot_wider(names_from = `Type of skill`, values_from = Value) %>% view()
 
@@ -593,7 +593,9 @@ data %>%
     ) %>%
     ungroup() %>%
     ggplot(aes(x = avg_COPA, y = avg_EMAIL)) + 
-    geom_point() 
+    geom_point() +
+    geom_smooth(method = "lm")
+
 
 
 
@@ -628,9 +630,40 @@ ggMarginal(p, type = 'histogram')
 
 ```
 
+## Application of Pivot Wider [CHALLENGE]
+
+Here's a challenge question, how can we compare ICT Skills across country and time between men vs women?
+
+```{r,include=FALSE}
+
+# How might we compare men vs women on ICT Skills across countries?
+data %>%
+    select(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
+    group_by(GeoAreaName, TimePeriod, Sex, `Type of skill`, Value) %>%
+    pivot_wider(names_from = Sex, values_from = Value) %>%
+    mutate(
+        MALE = as.numeric(MALE),
+        FEMALE = as.numeric(FEMALE),
+        BOTHSEX = as.numeric(BOTHSEX)
+    ) %>%
+    group_by(GeoAreaName) %>%
+    summarize(
+        avg_male = mean(MALE),
+        avg_female = mean(FEMALE)
+    ) %>%
+    ungroup() %>%
+    pivot_longer(cols = starts_with('avg'), names_to = 'Gender', values_to = 'Avg_Percent') %>%
+    filter(!is.na(Avg_Percent)) %>%
+    ggplot(aes(x = GeoAreaName, y = Avg_Percent, fill=Gender)) +
+    geom_bar(position = 'dodge', stat = 'identity') +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 
-## Visualization: Bells & Whistles
+
+
+```
+
+## Visualization: Beyond the Basics
 
 ```{r,include=FALSE}
 
