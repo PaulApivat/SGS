@@ -135,6 +135,11 @@ data %>%
 
 ```{r, include=FALSE}
 
+## Grammar of Graphics
+ggplot(data = data, mapping = aes(x,y)) +
+    geom_col()
+
+
 # Bar Chart
 data %>%
     select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
@@ -211,6 +216,52 @@ data %>%
     geom_point(aes(color = type_of_skill), size = 8, alpha = 0.5) +
     # add segment
     geom_segment(aes(x=type_of_skill, xend=type_of_skill, y=0, yend=mean_value))
+
+## Grammar of Graphics Demo
+
+# Data Wrangling
+data %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>%
+    mutate(
+        Value = as.double(Value)
+    ) %>%
+    group_by(type_of_skill) %>%
+    summarize(
+        mean_value = mean(Value),
+        median_value = median(Value)
+    ) %>%
+    ungroup() %>%
+    arrange(desc(mean_value)) %>%
+# Data Visualization
+    ggplot(aes(x = type_of_skill, y = mean_value)) +
+    geom_point(aes(color = type_of_skill), size = 8, alpha = 0.5) +
+    geom_segment(aes(x=type_of_skill, xend=type_of_skill, y=0, yend=mean_value))
+
+
+# Another way to write the code
+
+# Save wrangling 'steps' as a data object - mean_value_skill
+mean_value_skill <- data %>%
+    select(GeoAreaName, Value, Sex, `Type of skill`, TimePeriod) %>%
+    rename(type_of_skill = `Type of skill`) %>%
+    mutate(
+        Value = as.double(Value)
+    ) %>%
+    group_by(type_of_skill) %>%
+    summarize(
+        mean_value = mean(Value),
+        median_value = median(Value)
+    ) %>%
+    ungroup() %>%
+    arrange(desc(mean_value))
+
+# write out full ggplot
+ggplot(data = mean_value_skill, mapping = aes(x = type_of_skill, y = mean_value)) +
+    geom_point(aes(color = type_of_skill), size = 8, alpha = 0.5) +
+    geom_segment(aes(x=type_of_skill, xend=type_of_skill, y=0, yend=mean_value))
+
+
 
 ```
 
@@ -334,7 +385,7 @@ data %>%
     # add segment
     #geom_segment(aes(x=type_of_skill, xend=type_of_skill, y=0, yend=mean_value))
 
-?geom_segment    
+    
     
 ```
 
